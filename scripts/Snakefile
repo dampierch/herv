@@ -1,0 +1,83 @@
+'''
+snakefile for herv project
+'''
+
+rule setup_herv_bed:
+    input:
+        config = ancient('config.sh'),
+        py = ancient('setup_herv_bed.py')
+    output:
+        '/scratch/chd5n/herv/genmod/herv_transcriptome.bed'
+    shell:
+        '''
+        source {input.config}
+        module load anaconda/5.2.0-py3.6
+        python {input.py}
+        '''
+
+rule setup_herv_fasta:
+    input:
+        config = ancient('config.sh'),
+        bed = rules.setup_herv_bed.output,
+        sh = ancient('setup_herv_fasta.sh')
+    output:
+        '/scratch/chd5n/herv/genmod/herv_transcripts.fa'
+    shell:
+        '''
+        source {input.config}
+        sh {input.sh} {input.bed}
+        '''
+
+rule setup_ref_txome:
+    input:
+        config = ancient('config.sh'),
+        fasta = rules.setup_herv_fasta.output,
+        sh = ancient('setup_ref_txome.sh')
+    output:
+        targets = '/scratch/chd5n/herv/genmod/target_transcripts.fa',
+        gentrome = '/scratch/chd5n/herv/genmod/decoy_aware_transcriptome.fa',
+        decoys = '/scratch/chd5n/reference-genome/assembly/encode/GRCh38_no_alt_analysis.salmon_decoys.txt'
+    shell:
+        '''
+        source {input.config}
+        sh {input.sh} {input.fasta}
+        '''
+
+rule setup_salmon_idx:
+    input:
+        config = ancient('config.sh'),
+        gentrome = rules.setup_ref_txome.output.gentrome,
+        decoys = rules.setup_ref_txome.output.decoys,
+        sh = ancient('setup_salmon_idx.sh')
+    params:
+        min_kmer = 25
+    output:
+        '/scratch/chd5n/herv/salmon/gentrome_k25/complete_ref_lens.bin'
+    shell:
+        '''
+        source {input.config}
+        sbatch --output=setup_salmon.out {input.sh} {input.gentrome} {input.decoys} {params.min_kmer}
+        '''
+
+rule salmon:
+    input:
+        config = ancient('config.sh'),
+        py = 'salmon.py',
+        sh = 'salmon.sh'
+    params:
+        run_type = 'live',
+        source = 'barcuva',
+        seq_type = 'paired',
+        batch_size = 50,
+        idx = os.path.dirname(str(rules.setup_salmon_idx.output))
+    output:
+        '/scratch/chd5n/herv/salmon/quant/barcuva.salmon.idx'
+    shell:
+        '''
+        source {input.config}
+        python {input.py} --{params.run_type} \
+            --source {params.source} \
+            --seq_type {params.seq_type} \
+            --batch_size {params.batch_size} \
+            --idx {params.idx}
+        '''
