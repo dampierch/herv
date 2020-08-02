@@ -13,7 +13,8 @@
 ## -- requires config.sh to set environmental variables
 ## -- for use in snakemake workflow
 ## -- usage: snakemake salmon
-## -- process took 3h 14m for 369 compressed paired-end samples in 8 batches of 50
+
+## -- perform: 6h30m, 22GB for 369 gz paired samples, 8 batches of 50, 10 cpus
 
 
 script_name=salmon.sh
