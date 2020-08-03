@@ -4,7 +4,7 @@
 -- submit jobs for salmon quantification on rivanna
 -- requires config.sh to set environmental variables
 -- for use in snakemake workflow
--- usage: snakemake setup_herv_bed.py
+-- usage: snakemake salmon
 '''
 
 
@@ -31,7 +31,7 @@ def run_mod(**par):
     output = '_'.join([modname, par['source'], '%a.out'])
     shell_args = ' '.join(
             [
-                par['source'], par['in_path'], par['ext'],
+                par['source'], par['in_path'], par['ext'], par['seq_type'],
                 str(par['batch_size']), par['idx'], par['out_path']
             ]
         )
@@ -55,28 +55,32 @@ def parse_filesets(
     determine which files to process and how many batches are required
     '''
     fs_in = glob.glob(in_path + '*' + infile_ext)
-    fs_out = glob.glob(out_path + '*/*' + outfile_ext)
-    l = [f.split('/')[-2] for f in fs_out]
     if seq_type == 'paired':
-        filenum = len(fs_in)/2 - len(fs_out)  ## unprocessed/2 minus processed
-        if source == 'barcuva':
-            r1 = [id + '_R1_val_1' for id in l]
-            r2 = [id + '_R2_val_2' for id in l]
-        else:
-            r1 = [id + '_1' for id in l]
-            r2 = [id + '_2' for id in l]
-        l = r1 + r2
+        l_in = []
+        for f in fs_in:
+            l_in.append(f.strip(in_path).strip(infile_ext).split('_')[0])
     else:
-        filenum = len(fs_in) - len(fs_out)  ## unprocessed minus processed
+        l_in = [f.strip(in_path).strip(infile_ext) for f in fs_in]
+    fs_out = glob.glob(out_path + '*/*' + outfile_ext)
+    l_out = [f.split('/')[-2] for f in fs_out if f.split('/')[-2] in l_in]
+    if seq_type == 'paired':
+        if source == 'barcuva':
+            r1 = [id + '_R1_val_1' for id in l_out]
+            r2 = [id + '_R2_val_2' for id in l_out]
+        else:
+            r1 = [id + '_1' for id in l_out]
+            r2 = [id + '_2' for id in l_out]
+        l_out = r1 + r2  ## expand single-file output for pairs
+    filenum = len(fs_in) - len(l_out)  ## unprocessed minus processed
     array_max = math.ceil(filenum / batch_size)
-    fs_done = [in_path + f + infile_ext for f in l]
+    fs_done = [in_path + f + infile_ext for f in l_out]
     fs_todo = [f for f in fs_in if f not in fs_done]
     return array_max, fs_todo
 
 
 def parse_params(
-        command_dir, source, in_path, infile_ext, batch_size, idx, out_path,
-        array_max, fs_todo, run_type
+        command_dir, source, in_path, infile_ext, seq_type, batch_size, idx,
+        out_path, array_max, fs_todo, run_type
     ):
     '''
     set parameters
@@ -86,6 +90,7 @@ def parse_params(
         'source': source,
         'in_path': in_path,
         'ext': infile_ext,
+        'seq_type': seq_type,
         'batch_size': batch_size,
         'idx': idx,
         'out_path': out_path,
@@ -111,9 +116,9 @@ def set_source(modname, source):
     input_ext_dict = {
         'salmon': {
             'barcuva': '.fq.gz',
-            'sra': '.fastq.qz',
-            'gtex': '.fastq.qz',
-            'tcga': '.fastq.qz'
+            'sra': '.fastq.gz',
+            'gtex': '.fastq.gz',
+            'tcga': '.fastq.gz'
         }
     }
     return input_path_dict[modname][source], input_ext_dict[modname][source]
@@ -166,8 +171,8 @@ def main(args):
             batch_size
         )
     params = parse_params(
-            command_dir, source, in_path, infile_ext, batch_size, args.idx,
-            out_path, array_max, fs_todo, run_type
+            command_dir, source, in_path, infile_ext, args.seq_type, batch_size,
+            args.idx, out_path, array_max, fs_todo, run_type
         )
     run_mod(**params)
 

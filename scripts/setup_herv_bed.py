@@ -20,7 +20,7 @@ BED12 format
 
 -- requires config.sh to set environmental variables
 -- for use in snakemake workflow
--- usage: snakemake setup_herv_bed.py
+-- usage: snakemake setup_herv_bed
 
 -- input specifications:
     -- GTF: \t delimited, start index is 1-based

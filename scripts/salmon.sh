@@ -24,9 +24,10 @@ script_name=salmon.sh
 src=$1
 in_path=$2
 infile_ext=$3
-batch_size=$4
-idx_path=$5
-out_path=$6
+seq_type=$4
+batch_size=$5
+idx_path=$6
+out_path=$7
 SATID=$SLURM_ARRAY_TASK_ID
 
 
@@ -36,6 +37,7 @@ startup_report () {
   echo Starting $script_name ...
   echo
   echo Source: $src
+  echo Format: $seq_type
   echo Batch size: $batch_size
   echo Input: $in_path
   echo Output: $out_path
@@ -48,13 +50,20 @@ startup_report () {
 set_task_idx () {
   d=$(( $batch_size * ( $SATID - 1 ) ))
   q=$(( $batch_size * $SATID ))
+
+  if [ $seq_type == 'paired' ]; then
+    fs=_
+  elif [ $seq_type == 'single' ]; then
+    fs=.
+  fi
+
   if [ $SATID -eq 1 ]; then
-    cat ${out_path}${src}.${script_name%.sh}.idx | awk -v FS="_" '{print $1}' | \
-      sort | uniq | sed -e "${q}q" > \
+    cat ${out_path}${src}.${script_name%.sh}.idx | \
+      awk -v FS=$fs '{print $1}' | sort | uniq | sed -e "${q}q" > \
       ${out_path}${src}_${script_name%.sh}_idx_${SATID}.tmp
   elif [ $SATID -gt 1 ]; then
-    cat ${out_path}${src}.${script_name%.sh}.idx | awk -v FS="_" '{print $1}' | \
-      sort | uniq | sed -e "1,${d}d;${q}q" > \
+    cat ${out_path}${src}.${script_name%.sh}.idx | \
+      awk -v FS=$fs '{print $1}' | sort | uniq | sed -e "1,${d}d;${q}q" > \
       ${out_path}${src}_${script_name%.sh}_idx_${SATID}.tmp
   fi
 }
@@ -87,7 +96,8 @@ run_module () {
     echo Starting quantification for sample $sn
 
     ## if src == barcuva, reads are paired, length is 51 or 101
-    ## if src == tcga, some reads are paired and others are single, length is 75
+    ## if src == tcga, sra some reads are paired and others are single,
+    ##    length is variable
 
     if [ $src == 'barcuva' ]; then
       salmon quant \
@@ -99,9 +109,9 @@ run_module () {
         -2 <(gunzip -c ${elem}_R2_val_2${infile_ext}) \
         --validateMappings \
         -o ${out_path}${sn}
-    elif [ $src == 'tcga' ]; then
-      seq_type=`grep -c "$sn" ${out_path}${src}.${script_name%.sh}.idx`
-      if [ $seq_type -eq 2 ]; then
+    else
+      # seq_type=`grep -c "$sn" ${out_path}${src}.${script_name%.sh}.idx`
+      if [ $seq_type == 'paired' ]; then
         salmon quant \
           --gcBias \
           -p $SLURM_CPUS_PER_TASK \
@@ -111,7 +121,7 @@ run_module () {
           -2 <(gunzip -c ${elem}_2${infile_ext}) \
           --validateMappings \
           -o ${out_path}${sn}
-      elif [ $seq_type -eq 1 ]; then
+      elif [ $seq_type == 'single' ]; then
         salmon quant \
           --gcBias \
           -p $SLURM_CPUS_PER_TASK \
