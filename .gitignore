@@ -1,3 +1,4 @@
 logs/
 scripts/*.out
 scripts/.snakemake/
+scripts/__pycache__/

@@ -79,9 +79,40 @@ rule salmon:
     shell:
         '''
         source {input.config}
+        module load anaconda/5.2.0-py3.6
         python {input.py} --{params.run_type} \
             --source {params.source} \
             --seq_type {params.seq_type} \
             --batch_size {params.batch_size} \
             --idx {params.idx}
         '''
+
+rule setup_tcga:
+    input:
+        config = ancient('config.sh'),
+        files = 'gdc_req_files.py',
+        cases = 'gdc_req_cases.py',
+        legacy = 'gdc_req_legacy.py',
+        ann = 'gdc_ann_make.py'
+    output:
+        msi_mani = '/scratch/chd5n/herv/annotations/tcga/msi/manifest.tsv',
+        set_mani = '/scratch/chd5n/herv/annotations/tcga/manifest.tsv',
+        ann = '/scratch/chd5n/herv/annotations/tcga/ann.tsv'
+    shell:
+        '''
+        source {input.config}
+        module load anaconda/5.2.0-py3.6
+        python {input.ann}
+        '''
+
+rule download_tcga:
+    input:
+        config = ancient('config.sh'),
+        dl = 'gdc_download.py'
+    output:
+    shell:
+
+rule convert_tcga:
+    input:
+    output:
+    shell:
