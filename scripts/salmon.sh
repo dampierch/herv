@@ -48,6 +48,9 @@ startup_report () {
 
 
 set_task_idx () {
+  ## index code requires no "_" or "." occurs before unique identifier
+  ## this is fragile and should be improved in the future
+
   d=$(( $batch_size * ( $SATID - 1 ) ))
   q=$(( $batch_size * $SATID ))
 

@@ -72,7 +72,10 @@ def parse_filesets(
             r2 = [id + '_2' for id in l_out]
         l_out = r1 + r2  ## expand single-file output for pairs
     filenum = len(fs_in) - len(l_out)  ## unprocessed minus processed
-    array_max = math.ceil(filenum / batch_size)
+    if seq_type == 'paired':
+        array_max = math.ceil((filenum/2) / batch_size)
+    else:
+        array_max = math.ceil(filenum / batch_size)
     fs_done = [in_path + f + infile_ext for f in l_out]
     fs_todo = [f for f in fs_in if f not in fs_done]
     return array_max, fs_todo

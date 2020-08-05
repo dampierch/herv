@@ -68,14 +68,14 @@ rule salmon:
         # run options: test, live
         # source options: barcuva, sra, tcga
         # seq_type options: paired, single
-        run_type = 'live',
+        run_type = 'test',
         source = 'sra',
-        seq_type = 'single',
-        batch_size = 25,
+        seq_type = 'paired',
+        batch_size = 50,
         idx = os.path.dirname(str(rules.setup_salmon_idx.output))
     output:
         # '/scratch/chd5n/herv/salmon/quant/barcuva.salmon.idx'
-        '/scratch/chd5n/herv/salmon/quant/sra.salmon.idx'
+        # '/scratch/chd5n/herv/salmon/quant/sra.salmon.idx'
     shell:
         '''
         source {input.config}
