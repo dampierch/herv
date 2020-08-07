@@ -6,10 +6,6 @@ instead of manifest due to time contraints on front end
 -- used from within snakemake, so print statements not part of interactive
 testing or module loading should include flush=True
 -- usage: snakemake download_tcga
-
--- 695 uniq file_id
--- 686 uniq sample_id
--- 620 uniq case_id, subject_id
 '''
 
 
@@ -33,48 +29,84 @@ def read_inputs(in_man, in_ann):
     return man, ann
 
 
-def set_download(man, ann):
+def unique_subjects(df):
+    '''
+    set unique subject tag for given dataframe
+    '''
+    unq = pd.DataFrame(df['subject_id'].value_counts() == 1)
+    unq['unq'] = unq['subject_id']
+    unq['subject_id'] = unq.index
+    df = df.merge(unq, on='subject_id')
+    return df
+
+
+def sample_preference(df):
+    '''
+    set download tag with the following priority list:
+    -- unique subject
+    -- paired read format for replicates
+    -- max read count for replicates
+    '''
+    df['download'] = pd.Series()
+    fids = []
+    for i in df.index:
+        if df.loc[i,'unq']:
+            df.loc[i,'download'] = True
+        else:
+            df.loc[i,'download'] = False
+            id = df.loc[i,'subject_id']
+            idx = df['subject_id'] == id
+            subdf = df.loc[idx,['file_id','subject_id','read_format','total_seq']]
+            if any(subdf['read_format'] == 'paired'):
+                idx = subdf['read_format'] == 'paired'
+                pedf = subdf.loc[idx,:]
+                idx = pedf['total_seq'] == pedf['total_seq'].max()
+                fids.append(list(pedf.loc[idx,'file_id'])[0])
+            else:
+                idx = subdf['total_seq'] == subdf['total_seq'].max()
+                fids.append(list(subdf.loc[idx,'file_id'])[0])
+    for i in df.index:
+        if not df.loc[i,'download']:
+            if df.loc[i,'file_id'] in set(fids):
+                df.loc[i,'download'] = True
+    return df
+
+
+def set_selection(man, ann):
     '''
     identifies subset of files to download based on following criteria:
     -- not from ffpe specimen
-    -- from unique subject OR
-    -- from replicated subject but is
-        -- paired-end sample with highest number of reads OR if no paired-end
-        -- single-end sample with highest number of reads
+    -- from Adenomas and Adenocarcinomas
+    -- from Primary Tumor OR Solid Tissue Normal
+    -- from unique subject within tissue_type OR
+        -- from replicated subject BUT
+            -- from paired-end sample with highest number of reads within
+            tissue_type when paired-end sample present OR
+            -- from single-end sample with highest number of reads within
+            tissue_type when paired-end sample absent
     '''
     ## ffpe filter
     idx = ann['is_ffpe'] == False
     ann = ann.loc[idx,:]
-    ## unique tag, includes unique subject filter
-    idx = pd.DataFrame(ann['subject_id'].value_counts() == 1)
-    idx['unq'] = idx['subject_id']
-    idx['subject_id'] = idx.index
-    ann = ann.merge(idx, on='subject_id')
-    ## download tag, includes max read count filter for replicates
-    ann['download'] = pd.Series()
-    fids = []
-    for i in ann.index:
-        if ann.loc[i,'unq']:
-            ann.loc[i,'download'] = True
-        else:
-            ann.loc[i,'download'] = False
-            id = ann.loc[i,'subject_id']
-            idx = ann['subject_id'] == id
-            df = ann.loc[idx,['file_id','subject_id','read_format','total_seq']]
-            if any(df['read_format'] == 'paired'):
-                idx = df['read_format'] == 'paired'
-                df_pe = df.loc[idx,:]
-                idx = df_pe['total_seq'] == df_pe['total_seq'].max()
-                fids.append(list(df_pe.loc[idx,'file_id'])[0])
-            else:
-                idx = df['total_seq'] == df['total_seq'].max()
-                fids.append(list(df.loc[idx,'file_id'])[0])
-    for i in ann.index:
-        if not ann.loc[i,'download']:
-            if ann.loc[i,'file_id'] in set(fids):
-                ann.loc[i,'download'] = True
+    ## adenocarcinoma filter
+    idx = ann['disease_type'] == 'Adenomas and Adenocarcinomas'
+    ann = ann.loc[idx,:]
+    ## tissue type filter
+    idx = ann['tissue_type'] == 'Primary Tumor'
+    pri = ann.loc[idx,:]
+    idx = ann['tissue_type'] == 'Solid Tissue Normal'
+    nrm = ann.loc[idx,:]
+    ## unique subject tag
+    pri = unique_subjects(pri)
+    nrm = unique_subjects(nrm)
+    ## read format and max depth tag
+    pri = sample_preference(pri)
+    nrm = sample_preference(nrm)
+    ann = pd.concat([pri, nrm])
+    ## unique subject, read format, and max depth filter
     idx = ann['download'] == True
     ann = ann.loc[idx,:]
+    ann = ann.drop(columns=['unq','download'])
     idx = man['id'].isin(ann['file_id'])
     man = man.loc[idx,:]
     return man, ann
@@ -101,7 +133,7 @@ def parse_files(in_man, in_ann, out_man, out_ann, read_format):
     -- return uuids for download
     '''
     man, ann = read_inputs(in_man, in_ann)
-    man, ann = set_download(man, ann)
+    man, ann = set_selection(man, ann)
     write_outputs(man, ann, out_man, out_ann)
     uuids = get_uuids(ann, read_format)
     return uuids
@@ -113,7 +145,7 @@ def check_bams(uuids, dest):
     -- returns list of file_ids to be downloaded
     '''
     bams = glob.glob(dest + '*/*.bam')
-    uuids_done = [i.split('/')[-2] for i in bams if i in uuids]
+    uuids_done = [i.split('/')[-2] for i in bams if i.split('/')[-2] in uuids]
     uuids_todo = [i for i in uuids if i not in uuids_done]
     return uuids_todo
 
