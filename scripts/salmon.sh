@@ -24,7 +24,7 @@ script_name=salmon.sh
 src=$1
 in_path=$2
 infile_ext=$3
-seq_type=$4
+read_format=$4
 batch_size=$5
 idx_path=$6
 out_path=$7
@@ -37,7 +37,7 @@ startup_report () {
   echo Starting $script_name ...
   echo
   echo Source: $src
-  echo Format: $seq_type
+  echo Format: $read_format
   echo Batch size: $batch_size
   echo Input: $in_path
   echo Output: $out_path
@@ -54,9 +54,9 @@ set_task_idx () {
   d=$(( $batch_size * ( $SATID - 1 ) ))
   q=$(( $batch_size * $SATID ))
 
-  if [ $seq_type == 'paired' ]; then
+  if [ $read_format == 'paired' ]; then
     fs=_
-  elif [ $seq_type == 'single' ]; then
+  elif [ $read_format == 'single' ]; then
     fs=.
   fi
 
@@ -113,8 +113,7 @@ run_module () {
         --validateMappings \
         -o ${out_path}${sn}
     else
-      # seq_type=`grep -c "$sn" ${out_path}${src}.${script_name%.sh}.idx`
-      if [ $seq_type == 'paired' ]; then
+      if [ $read_format == 'paired' ]; then
         salmon quant \
           --gcBias \
           -p $SLURM_CPUS_PER_TASK \
@@ -124,7 +123,7 @@ run_module () {
           -2 <(gunzip -c ${elem}_2${infile_ext}) \
           --validateMappings \
           -o ${out_path}${sn}
-      elif [ $seq_type == 'single' ]; then
+      elif [ $read_format == 'single' ]; then
         salmon quant \
           --gcBias \
           -p $SLURM_CPUS_PER_TASK \
