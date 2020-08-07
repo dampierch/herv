@@ -3,7 +3,7 @@
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=10
-#SBATCH --mem=30000
+#SBATCH --mem=50000
 #SBATCH --time=10:00:00
 #SBATCH --partition=standard
 #SBATCH --account=chd5n_alloc
@@ -29,6 +29,7 @@ batch_size=$5
 idx_path=$6
 out_path=$7
 SATID=$SLURM_ARRAY_TASK_ID
+CPUS=$SLURM_CPUS_PER_TASK
 
 
 startup_report () {
@@ -43,6 +44,7 @@ startup_report () {
   echo Output: $out_path
   echo Index: $idx_path
   echo Array: $SATID
+  echo CPUs: $CPUS
   echo
 }
 
@@ -105,7 +107,7 @@ run_module () {
     if [ $src == 'barcuva' ]; then
       salmon quant \
         --gcBias \
-        -p $SLURM_CPUS_PER_TASK \
+        -p $CPUS \
         -i $idx_path \
         -l A \
         -1 <(gunzip -c ${elem}_R1_val_1${infile_ext}) \
@@ -116,7 +118,7 @@ run_module () {
       if [ $read_format == 'paired' ]; then
         salmon quant \
           --gcBias \
-          -p $SLURM_CPUS_PER_TASK \
+          -p $CPUS \
           -i $idx_path \
           -l A \
           -1 <(gunzip -c ${elem}_1${infile_ext}) \
@@ -126,7 +128,7 @@ run_module () {
       elif [ $read_format == 'single' ]; then
         salmon quant \
           --gcBias \
-          -p $SLURM_CPUS_PER_TASK \
+          -p $CPUS \
           -i $idx_path \
           -l A \
           -r <(gunzip -c ${elem}${infile_ext}) \

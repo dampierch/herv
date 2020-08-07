@@ -67,22 +67,23 @@ rule salmon:
     params:
         # run options: test, live
         # source options: barcuva, sra, tcga
-        # seq_type options: paired, single
-        run_type = 'test',
-        source = 'sra',
-        seq_type = 'paired',
-        batch_size = 50,
+        # read_format options: paired, single
+        run_type = 'live',
+        source = 'tcga',
+        read_format = 'single',
+        batch_size = 30,
         idx = os.path.dirname(str(rules.setup_salmon_idx.output))
     output:
         # '/scratch/chd5n/herv/salmon/quant/barcuva.salmon.idx'
         # '/scratch/chd5n/herv/salmon/quant/sra.salmon.idx'
+        '/scratch/chd5n/herv/salmon/quant/tcga.salmon.idx'
     shell:
         '''
         source {input.config}
         module load anaconda/5.2.0-py3.6
         python {input.py} --{params.run_type} \
             --source {params.source} \
-            --seq_type {params.seq_type} \
+            --read_format {params.read_format} \
             --batch_size {params.batch_size} \
             --idx {params.idx}
         '''
