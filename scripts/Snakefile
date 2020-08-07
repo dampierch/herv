@@ -112,7 +112,7 @@ rule download_tcga:
         man = rules.setup_tcga.output.set_man,
         ann = rules.setup_tcga.output.ann
     params:
-        run_type = 'test',
+        run_type = 'live',
         read_format = 'single',
         token = '/scratch/chd5n/downloads/gdc-user-token.2020-08-06T16_36_05.447Z.txt'
     output:
@@ -139,13 +139,16 @@ rule convert_tcga:
         py = 'gdc_biobambam.py',
         sh = 'gdc_biobambam.sh'
     params:
-        run_type = 'test',
+        run_type = 'live',
         read_format = 'single',
+        batch_size = 30
     output:
-        'test.fles'
+        '/scratch/chd5n/herv/fastq/gdc_biobambam.idx'
     shell:
         '''
         source {input.config}
         module load anaconda/5.2.0-py3.6
-        python {input.py} --{params.run_type}
+        python {input.py} --{params.run_type} \
+            --read_format {params.read_format} \
+            --batch_size {params.batch_size}
         '''
