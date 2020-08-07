@@ -31,7 +31,7 @@ def run_mod(**par):
     output = '_'.join([modname, par['source'], '%a.out'])
     shell_args = ' '.join(
             [
-                par['source'], par['in_path'], par['ext'], par['seq_type'],
+                par['source'], par['in_path'], par['ext'], par['read_format'],
                 str(par['batch_size']), par['idx'], par['out_path']
             ]
         )
@@ -49,21 +49,20 @@ def run_mod(**par):
 
 
 def parse_filesets(
-        source, in_path, infile_ext, seq_type, out_path, outfile_ext, batch_size
+        source, in_path, infile_ext, read_format, out_path, outfile_ext,
+        batch_size
     ):
     '''
     determine which files to process and how many batches are required
     '''
     fs_in = glob.glob(in_path + '*' + infile_ext)
-    if seq_type == 'paired':
-        l_in = []
-        for f in fs_in:
-            l_in.append(f.strip(in_path).strip(infile_ext).split('_')[0])
+    if read_format == 'paired':
+        l_in = [f[len(in_path):-len(infile_ext)].split('_')[0] for f in fs_in]
     else:
-        l_in = [f.strip(in_path).strip(infile_ext) for f in fs_in]
+        l_in = [f[len(in_path):-len(infile_ext)] for f in fs_in]
     fs_out = glob.glob(out_path + '*/*' + outfile_ext)
     l_out = [f.split('/')[-2] for f in fs_out if f.split('/')[-2] in l_in]
-    if seq_type == 'paired':
+    if read_format == 'paired':
         if source == 'barcuva':
             r1 = [id + '_R1_val_1' for id in l_out]
             r2 = [id + '_R2_val_2' for id in l_out]
@@ -72,7 +71,7 @@ def parse_filesets(
             r2 = [id + '_2' for id in l_out]
         l_out = r1 + r2  ## expand single-file output for pairs
     filenum = len(fs_in) - len(l_out)  ## unprocessed minus processed
-    if seq_type == 'paired':
+    if read_format == 'paired':
         array_max = math.ceil((filenum/2) / batch_size)
     else:
         array_max = math.ceil(filenum / batch_size)
@@ -82,7 +81,7 @@ def parse_filesets(
 
 
 def parse_params(
-        command_dir, source, in_path, infile_ext, seq_type, batch_size, idx,
+        command_dir, source, in_path, infile_ext, read_format, batch_size, idx,
         out_path, array_max, fs_todo, run_type
     ):
     '''
@@ -93,7 +92,7 @@ def parse_params(
         'source': source,
         'in_path': in_path,
         'ext': infile_ext,
-        'seq_type': seq_type,
+        'read_format': read_format,
         'batch_size': batch_size,
         'idx': idx,
         'out_path': out_path,
@@ -169,12 +168,13 @@ def main(args):
     batch_size = int(args.batch_size)
     run_type = args.run_type
     check_outpath(out_path, run_type)
+    read_format = args.read_format
     array_max, fs_todo = parse_filesets(
-            source, in_path, infile_ext, args.seq_type, out_path, outfile_ext,
+            source, in_path, infile_ext, read_format, out_path, outfile_ext,
             batch_size
         )
     params = parse_params(
-            command_dir, source, in_path, infile_ext, args.seq_type, batch_size,
+            command_dir, source, in_path, infile_ext, read_format, batch_size,
             args.idx, out_path, array_max, fs_todo, run_type
         )
     run_mod(**params)
@@ -187,8 +187,8 @@ if __name__ == '__main__':
         dest='source'
     )
     parser.add_argument(
-        '--seq_type', help='paired or single reads', action='store',
-        dest='seq_type'
+        '--read_format', help='paired or single reads', action='store',
+        dest='read_format'
     )
     parser.add_argument(
         '--batch_size', help='number of samples to process in single batch',
@@ -207,7 +207,7 @@ if __name__ == '__main__':
         dest='run_type'
     )
     parser.set_defaults(
-        source='sra', seq_type='paired', batch_size=10, run_type=False
+        source='sra', read_format='paired', batch_size=10, run_type=False
     )
     args = parser.parse_args()
     main(args)
