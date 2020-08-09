@@ -2,9 +2,9 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=1
-#SBATCH --mem=5000
-#SBATCH --time=05:00:00
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=50000
+#SBATCH --time=12:00:00
 #SBATCH --partition=standard
 #SBATCH --account=chd5n_alloc
 #SBATCH --mail-type=END
@@ -14,7 +14,8 @@
 ## -- for use in snakemake workflow
 ## -- usage: snakemake convert_tcga
 
-## -- perform: 1h, 41MB for 220 bam single, 8 batches of 30, 1 cpu
+## -- perform: 1h, 41MB for 220 bam single, 8 batches of 30, 1 cpu w/o shuffle
+## -- perform: 2h20m, 8GB for 220 bam single, 8 batches of 30, 4 cpu w/ shuffle
 
 
 script_name=gdc_biobambam.sh
@@ -23,11 +24,11 @@ script_name=gdc_biobambam.sh
 ## command-line arguments
 in_path=$1
 infile_ext=$2
-read_format=$3
+export read_format=$3  ## shuffle needs this variable
 batch_size=$4
 out_path=$5
 SATID=$SLURM_ARRAY_TASK_ID
-CPUS=$SLURM_CPUS_PER_TASK
+export CPUS=$SLURM_CPUS_PER_TASK  ## shuffle needs this variable for pigz
 
 
 startup_report () {
@@ -86,29 +87,29 @@ run_module () {
   for elem in $(<${out_path}${script_name%.sh}_idx_${SATID}.tmp); do  ## elem includes path to input
     sn=`echo $elem | awk -v FS="::" '{print $1}'`
     fn=`echo $elem | awk -v FS="::" '{print $2}'`
-    echo Starting quantification for sample $sn
+    echo Starting conversion for sample $sn
     echo '--' File name: $fn
 
     ## tcga, so some reads are paired and others are single, length is variable
 
     if [ $read_format == 'paired' ]; then
       bamtofastq \
-        gz=1 \
-        level=1 \
+        gz=0 \
         filename=${fn} \
-        F=${out_path}${sn}_1.fastq.gz \
-        F2=${out_path}${sn}_2.fastq.gz
+        F=${out_path}${sn}_1.fastq \
+        F2=${out_path}${sn}_2.fastq
+      ${command_dir}shuffle.sh ${out_path}${sn}_1.fastq ${out_path}${sn}_2.fastq
     elif [ $read_format == 'single' ]; then
       bamtofastq \
-        gz=1 \
-        level=1 \
+        gz=0 \
         filename=${fn} \
-        S=${out_path}${sn}.fastq.gz
+        S=${out_path}${sn}.fastq
+      ${command_dir}shuffle.sh ${out_path}${sn}.fastq
     else
       echo Encountered a problem with $sn
       exit
     fi
-    echo Done with quantification for sample $sn
+    echo Done with conversion for sample $sn
   done
   rm ${out_path}${script_name%.sh}_idx_${SATID}.tmp
 }
