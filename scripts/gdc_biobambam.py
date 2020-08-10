@@ -61,7 +61,8 @@ def get_ids(ann, read_format):
             else:
                 d = dict(list(zip(fields, in_line.strip('\n').split('\t'))))
                 if d['read_format'] == read_format:
-                    ids[d['subject_id']] = d['file_id']
+                    k = '-'.join([d['subject_id'],d['tissue_type'].split()[-1]])
+                    ids[k] = d['file_id']
             line_num = line_num + 1
     return ids
 
@@ -82,11 +83,11 @@ def parse_filesets(
     fs_out = glob.glob(out_path + '*' + outfile_ext)
     l_out = []
     for f in fs_out:
-        if f[len(out_path):-len(outfile_ext)] in ids:
-            l_out.append(f[len(out_path):-len(outfile_ext)])
-    filenum = len(d_in) - len(l_out)  ## unprocessed minus processed
+        if f[len(out_path):-len(outfile_ext)].split('_')[0] in ids:
+            l_out.append(f[len(out_path):-len(outfile_ext)].split('_')[0])
+    filenum = len(d_in) - len(set(l_out))  ## unprocessed minus processed
     array_max = math.ceil(filenum / batch_size)
-    l_out = [d_in[ids[id]] for id in l_out]
+    l_out = [d_in[ids[id]] for id in set(l_out)]
     fs_done = [f for f in l_out]
     fs_todo = [d_in[f] for f in d_in if d_in[f] not in fs_done]
     ids = {v: k for k, v in ids.items()}  ## invert ids dict to write todo list

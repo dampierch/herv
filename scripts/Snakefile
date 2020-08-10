@@ -68,7 +68,7 @@ rule salmon:
         # run options: test, live
         # source options: barcuva, sra, tcga
         # read_format options: paired, single
-        run_type = 'live',
+        run_type = 'test',
         source = 'tcga',
         read_format = 'single',
         batch_size = 30,
@@ -113,8 +113,8 @@ rule download_tcga:
         man = rules.setup_tcga.output.set_man,
         ann = rules.setup_tcga.output.ann
     params:
-        run_type = 'live',
-        read_format = 'single',
+        run_type = 'test',
+        read_format = 'paired',
         token = '/scratch/chd5n/downloads/gdc-user-token.2020-08-06T16_36_05.447Z.txt'
     output:
         man = '/scratch/chd5n/herv/annotations/tcga/manifest_select.tsv',
@@ -138,11 +138,12 @@ rule convert_tcga:
         config = ancient('config.sh'),
         ann = rules.download_tcga.output.ann,
         py = 'gdc_biobambam.py',
-        sh = 'gdc_biobambam.sh'
+        sh = 'gdc_biobambam.sh',
+        sub = 'shuffle.sh'
     params:
-        run_type = 'live',
-        read_format = 'single',
-        batch_size = 30
+        run_type = 'test',
+        read_format = 'paired',
+        batch_size = 40
     output:
         '/scratch/chd5n/herv/fastq/gdc_biobambam.idx'
     shell:
