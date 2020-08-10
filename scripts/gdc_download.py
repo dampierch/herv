@@ -24,8 +24,8 @@ def read_inputs(in_man, in_ann):
     '''
     reads targets
     '''
-    man = pd.read_csv(in_man, sep='\t')
-    ann = pd.read_csv(in_ann, sep='\t')
+    man = pd.read_csv(in_man, sep='\t', header=0)
+    ann = pd.read_csv(in_ann, sep='\t', header=0)
     return man, ann
 
 
@@ -113,8 +113,8 @@ def set_selection(man, ann):
 
 
 def write_outputs(df1, df2, fn1, fn2):
-    df1.to_csv(fn1, sep='\t')
-    df2.to_csv(fn2, sep='\t')
+    df1.to_csv(fn1, sep='\t', index=False)
+    df2.to_csv(fn2, sep='\t', index=False)
 
 
 def get_uuids(ann, read_format):
