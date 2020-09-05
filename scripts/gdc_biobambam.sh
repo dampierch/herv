@@ -16,6 +16,7 @@
 
 ## -- perform: 1h, 41MB for 220 bam single, 8 batches of 30, 1 cpu w/o shuffle
 ## -- perform: 2h20m, 8GB for 220 bam single, 8 batches of 30, 4 cpu w/ shuffle
+## -- perform: 11h, 32GB for 365 bam paired, 10 batches of 40, 4 cpu w/ shuffle
 
 
 script_name=gdc_biobambam.sh

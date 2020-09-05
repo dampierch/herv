@@ -65,18 +65,18 @@ rule salmon:
         py = 'salmon.py',
         sh = 'salmon.sh'
     params:
-        # run options: test, live
-        # source options: barcuva, sra, tcga
-        # read_format options: paired, single
+        ## run options: test, live
+        ## source options: barcuva, sra, tcga
+        ## read_format options: paired, single
         run_type = 'test',
         source = 'tcga',
-        read_format = 'single',
+        read_format = 'paired',
         batch_size = 30,
         idx = os.path.dirname(str(rules.setup_salmon_idx.output))
     output:
         # '/scratch/chd5n/herv/salmon/quant/barcuva.salmon.idx'
         # '/scratch/chd5n/herv/salmon/quant/sra.salmon.idx'
-        '/scratch/chd5n/herv/salmon/quant/tcga.salmon.idx'
+        # '/scratch/chd5n/herv/salmon/quant/tcga.salmon.idx'
     shell:
         '''
         source {input.config}
@@ -153,4 +153,24 @@ rule convert_tcga:
         python {input.py} --{params.run_type} \
             --read_format {params.read_format} \
             --batch_size {params.batch_size}
+        '''
+
+rule quant_check:
+    input:
+        a = '/scratch/chd5n/field-effect/annotations/cohort_A.tsv',
+        b = '/scratch/chd5n/field-effect/annotations/cohort_B.tsv',
+        c = '/scratch/chd5n/field-effect/annotations/cohort_C.tsv',
+        py = 'quant_check.py'
+    output:
+        '/scratch/chd5n/herv/done.txt',
+        '/scratch/chd5n/herv/todo_A.txt',
+        '/scratch/chd5n/herv/todo_B.txt',
+        '/scratch/chd5n/herv/todo_C.txt'
+    shell:
+        '''
+        find /scratch/chd5n/herv/salmon/quant/ -mindepth 1 -maxdepth 1 \
+            -type d | awk -v FS="/" '!($0~/tcga-se/) {{print $NF}}' | sort > \
+            /scratch/chd5n/herv/done.txt
+        module load anaconda/5.2.0-py3.6
+        python {input.py}
         '''
