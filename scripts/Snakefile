@@ -129,8 +129,8 @@ rule download_tcga:
         python {input.py} --{params.run_type} \
             --read_format {params.read_format} \
             --token {params.token} \
-        > download_tcga.out \
-        2> download_tcga.err
+        > {output.out} \
+        2> {output.err}
         '''
 
 rule convert_tcga:
@@ -157,20 +157,62 @@ rule convert_tcga:
 
 rule quant_check:
     input:
+        config = ancient('config.sh'),
         a = '/scratch/chd5n/field-effect/annotations/cohort_A.tsv',
         b = '/scratch/chd5n/field-effect/annotations/cohort_B.tsv',
         c = '/scratch/chd5n/field-effect/annotations/cohort_C.tsv',
         py = 'quant_check.py'
     output:
-        '/scratch/chd5n/herv/done.txt',
-        '/scratch/chd5n/herv/todo_A.txt',
-        '/scratch/chd5n/herv/todo_B.txt',
-        '/scratch/chd5n/herv/todo_C.txt'
+        d = '/scratch/chd5n/herv/done.txt',
+        a = '/scratch/chd5n/herv/todo_A.tsv',
+        b = '/scratch/chd5n/herv/todo_B.tsv',
+        c = '/scratch/chd5n/herv/todo_C.tsv'
     shell:
         '''
-        find /scratch/chd5n/herv/salmon/quant/ -mindepth 1 -maxdepth 1 \
-            -type d | awk -v FS="/" '!($0~/tcga-se/) {{print $NF}}' | sort > \
-            /scratch/chd5n/herv/done.txt
+        source {input.config}
+        find $salqnt_dir -mindepth 1 -maxdepth 1 -type d | awk -v FS="/" '
+            !($0~/tcga-se/) {{print $NF}}' | sort > {output.d}
         module load anaconda/5.2.0-py3.6
         python {input.py}
+        '''
+
+rule download_ncbi:
+    input:
+        config = ancient('config.sh'),
+        py = 'ncbi_download.py',
+        a = rules.quant_check.output.a,
+        b = rules.quant_check.output.b,
+        c = rules.quant_check.output.c,
+        key = '/scratch/chd5n/downloads/prj_19793_D22501.ngc'
+    params:
+        run_type = 'test'
+    output:
+        log = 'ncbi_download.log',
+        out = 'download_ncbi.out',
+        err = 'download_ncbi.err'
+    shell:
+        '''
+        source {input.config}
+        module load anaconda/5.2.0-py3.6
+        module load sratoolkit/2.10.5
+        python {input.py} --{params.run_type} \
+            --tsv_a {input.a} \
+            --tsv_b {input.b} \
+            --tsv_c {input.c} \
+            --key {input.key} \
+        > {output.out} \
+        2> {output.err}
+        '''
+
+rule compress_fastq:
+    input:
+        sh = 'compress_fastq.sh'
+    params:
+        target = '/scratch/chd5n/downloads/'
+    output:
+        err = 'compress_fastq.err'
+    shell:
+        '''
+        sbatch --output=compress_fastq.out {input.sh} {params.target} \
+            2> {output.err}
         '''

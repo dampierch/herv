@@ -6,6 +6,9 @@
 '''
 
 
+import os
+
+
 modname = 'quant_check'
 
 
@@ -53,7 +56,7 @@ def main():
     a = '/scratch/chd5n/field-effect/annotations/cohort_A.tsv'
     b = '/scratch/chd5n/field-effect/annotations/cohort_B.tsv'
     c = '/scratch/chd5n/field-effect/annotations/cohort_C.tsv'
-    d = '/scratch/chd5n/herv/done.txt'
+    d = ''.join([os.environ['work_dir'], 'done.txt'])
     ainfo = get_info(a)
     binfo = get_info(b)
     cinfo = get_info(c)
@@ -61,11 +64,11 @@ def main():
     with open(d,'r') as infile:
         for inline in infile:
             dlist.append(inline.strip('\n'))
-    target = '/scratch/chd5n/herv/todo_A.txt'
+    target = ''.join([os.environ['work_dir'], 'todo_A.tsv'])
     write_missing(target,ainfo,dlist)
-    target = '/scratch/chd5n/herv/todo_B.txt'
+    target = ''.join([os.environ['work_dir'], 'todo_B.tsv'])
     write_missing(target,binfo,dlist)
-    target = '/scratch/chd5n/herv/todo_C.txt'
+    target = ''.join([os.environ['work_dir'], 'todo_C.tsv'])
     write_missing(target,cinfo,dlist)
 
 
