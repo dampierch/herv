@@ -78,31 +78,67 @@ def download_cmd(d, threads, key):
     return cmd
 
 
-def get_files(a, b, c, dest, threads, key, live):
+def download_cmd_alt(d, key):
     '''
-    download target fastq files by accession number
+    -- construct prefetch download command using dictionary of parameters
+    -- per ncbi, prefetch is more resilient than fasterq-dump
+    -- use prefetch when fasterq-dump fails
+    -- requires subsequent conversion from sra to fastq
+    '''
+    cmd = 'prefetch'
+    if d['database'] == 'sradbg':
+        cmd = ' '.join([cmd, '--ngc', key])
+    odr = ' '.join(['--output-directory', os.environ['download_dir']])
+    ofi = ' '.join(['--output-file', '.'.join([d['accession'], 'sra'])])
+    cmd = ' '.join([cmd, odr, ofi, d['accession']])
+    return cmd
+
+
+def download_cmd_legacy(d, key):
+    '''
+    construct legacy fastq-dump download command using dictionary of parameters
+    '''
+    cmd = 'fastq-dump'
+    if d['database'] == 'sradbg':
+        cmd = ' '.join([cmd, '--ngc', key.split('/')[-1]])
+    opx = '--skip-technical --readids'
+    if d['format'] == 'paired':
+        opx = ' '.join([opx, '--split-e'])
+    cmd = ' '.join([cmd, opx, d['accession']])
+    return cmd
+
+
+def get_files(a, b, c, dest, threads, key, cmd_type, live):
+    '''
+    download target fastq or sra files by accession number
     '''
     df = read_inputs(a, b, c)
     pars = get_parameters(df)
     acc_todo = check_fastq(pars.keys(), dest)
+    logging.info('%s accessions to download', len(acc_todo))
     for e in acc_todo:
         logging.info('Working on accession %s', e)
-        cmd = download_cmd(pars[e], threads, key)
-        if pars[e]['format'] == 'paired':
-            logging.info('Downloading paired-end files. This may take a while ...')
+        if cmd_type == 'default':
+            cmd = download_cmd(pars[e], threads, key)
+        elif cmd_type == 'legacy':
+            os.chdir(dest)
+            cmd = download_cmd_legacy(pars[e], key)
         else:
-            logging.info('Downloading single-end file. This may take a while ...')
+            cmd = download_cmd_alt(pars[e], key)
+        if pars[e]['format'] == 'paired':
+            logging.info('%s is paired-end. Download may take a while ...', e)
+        else:
+            logging.info('%s is single-end. Download may take a while ...', e)
         if live:
             subprocess.call(cmd, shell=True)
-            logging.info('Download command sent!')
         else:
             print(cmd, flush=True)
-        logging.info('Done with accession %s', e)
+    logging.info('Done !')
 
 
 def main(args):
     '''
-    get fastq files from NCBI using accession numbers from input tables
+    get fastq or sra files from NCBI using accession numbers from input tables
     '''
     logging.basicConfig(
         filename='.'.join([modname,'log']),
@@ -116,8 +152,9 @@ def main(args):
     dest = os.environ['download_dir']
     threads = 8
     key = args.key
+    cmd_type = args.cmd_type
     live = args.run_type
-    get_files(a, b, c, dest, threads, key, live)
+    get_files(a, b, c, dest, threads, key, cmd_type, live)
 
 
 if __name__ == '__main__':
@@ -135,6 +172,9 @@ if __name__ == '__main__':
         '--key', help='path to dbGaP access key', action='store', dest='key'
     )
     parser.add_argument(
+        '--cmd_type', help='default, alternate, legacy', action='store', dest='cmd_type'
+    )
+    parser.add_argument(
         '--live', help='execute a live run', action='store_true',
         dest='run_type'
     )
@@ -147,6 +187,7 @@ if __name__ == '__main__':
         tsv_b='/scratch/chd5n/herv/todo_B.tsv',
         tsv_c='/scratch/chd5n/herv/todo_C.tsv',
         key='',
+        cmd_type='default',
         run_type=False
     )
     args = parser.parse_args()

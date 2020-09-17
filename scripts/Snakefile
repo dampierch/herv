@@ -185,7 +185,8 @@ rule download_ncbi:
         c = rules.quant_check.output.c,
         key = '/scratch/chd5n/downloads/prj_19793_D22501.ngc'
     params:
-        run_type = 'test'
+        run_type = 'test',
+        cmd_type = 'legacy'
     output:
         log = 'ncbi_download.log',
         out = 'download_ncbi.out',
@@ -200,6 +201,7 @@ rule download_ncbi:
             --tsv_b {input.b} \
             --tsv_c {input.c} \
             --key {input.key} \
+            --cmd_type {params.cmd_type} \
         > {output.out} \
         2> {output.err}
         '''
