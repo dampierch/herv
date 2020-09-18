@@ -46,10 +46,15 @@ def write_missing(target,info,done):
     write sample info for missing samples
     '''
     l = [info[k] for k in info if k not in done]
-    with open(target,'w') as outfile:
-        outfile.write(''.join(['\t'.join(l[0].keys()),'\n']))
-        for d in l:
-            outfile.write(''.join(['\t'.join(d.values()),'\n']))
+    if len(l) > 0:
+        with open(target,'w') as outfile:
+            outfile.write(''.join(['\t'.join(l[0].keys()),'\n']))
+            for d in l:
+                outfile.write(''.join(['\t'.join(d.values()),'\n']))
+    else:
+        print('Nothing to write to', target)
+        with open(target,'w') as outfile:
+            outfile.write('')
 
 
 def main():
