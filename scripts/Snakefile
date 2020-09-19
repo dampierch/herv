@@ -2,6 +2,73 @@
 snakefile for herv project
 '''
 
+rule setup_tcga:
+    input:
+        config = ancient('config.sh'),
+        files = 'gdc_req_files.py',
+        cases = 'gdc_req_cases.py',
+        legacy = 'gdc_req_legacy.py',
+        ann = 'gdc_ann_make.py'
+    output:
+        msi_man = '/scratch/chd5n/herv/annotations/tcga/msi/manifest.tsv',
+        set_man = '/scratch/chd5n/herv/annotations/tcga/manifest.tsv',
+        ann = '/scratch/chd5n/herv/annotations/tcga/ann.tsv'
+    shell:
+        '''
+        source {input.config}
+        module load anaconda/5.2.0-py3.6
+        python {input.ann}
+        '''
+
+rule download_tcga:
+    input:
+        config = ancient('config.sh'),
+        py = 'gdc_download.py',
+        man = rules.setup_tcga.output.set_man,
+        ann = rules.setup_tcga.output.ann
+    params:
+        run_type = 'test',
+        read_format = 'paired',
+        token = '/scratch/chd5n/downloads/gdc-user-token.2020-08-06T16_36_05.447Z.txt'
+    output:
+        man = '/scratch/chd5n/herv/annotations/tcga/manifest_select.tsv',
+        ann = '/scratch/chd5n/herv/annotations/tcga/ann_select.tsv',
+        log = 'gdc_download.log',
+        out = 'download_tcga.out',
+        err = 'download_tcga.err'
+    shell:
+        '''
+        source {input.config}
+        module load anaconda/5.2.0-py3.6
+        python {input.py} --{params.run_type} \
+            --read_format {params.read_format} \
+            --token {params.token} \
+        > {output.out} \
+        2> {output.err}
+        '''
+
+rule convert_tcga:
+    input:
+        config = ancient('config.sh'),
+        ann = rules.download_tcga.output.ann,
+        py = 'gdc_biobambam.py',
+        sh = 'gdc_biobambam.sh',
+        sub = 'shuffle.sh'
+    params:
+        run_type = 'test',
+        read_format = 'paired',
+        batch_size = 40
+    output:
+        '/scratch/chd5n/herv/fastq/gdc_biobambam.idx'
+    shell:
+        '''
+        source {input.config}
+        module load anaconda/5.2.0-py3.6
+        python {input.py} --{params.run_type} \
+            --read_format {params.read_format} \
+            --batch_size {params.batch_size}
+        '''
+
 rule setup_herv_bed:
     input:
         config = ancient('config.sh'),
@@ -88,79 +155,12 @@ rule salmon:
             --idx {params.idx}
         '''
 
-rule setup_tcga:
-    input:
-        config = ancient('config.sh'),
-        files = 'gdc_req_files.py',
-        cases = 'gdc_req_cases.py',
-        legacy = 'gdc_req_legacy.py',
-        ann = 'gdc_ann_make.py'
-    output:
-        msi_man = '/scratch/chd5n/herv/annotations/tcga/msi/manifest.tsv',
-        set_man = '/scratch/chd5n/herv/annotations/tcga/manifest.tsv',
-        ann = '/scratch/chd5n/herv/annotations/tcga/ann.tsv'
-    shell:
-        '''
-        source {input.config}
-        module load anaconda/5.2.0-py3.6
-        python {input.ann}
-        '''
-
-rule download_tcga:
-    input:
-        config = ancient('config.sh'),
-        py = 'gdc_download.py',
-        man = rules.setup_tcga.output.set_man,
-        ann = rules.setup_tcga.output.ann
-    params:
-        run_type = 'test',
-        read_format = 'paired',
-        token = '/scratch/chd5n/downloads/gdc-user-token.2020-08-06T16_36_05.447Z.txt'
-    output:
-        man = '/scratch/chd5n/herv/annotations/tcga/manifest_select.tsv',
-        ann = '/scratch/chd5n/herv/annotations/tcga/ann_select.tsv',
-        log = 'gdc_download.log',
-        out = 'download_tcga.out',
-        err = 'download_tcga.err'
-    shell:
-        '''
-        source {input.config}
-        module load anaconda/5.2.0-py3.6
-        python {input.py} --{params.run_type} \
-            --read_format {params.read_format} \
-            --token {params.token} \
-        > {output.out} \
-        2> {output.err}
-        '''
-
-rule convert_tcga:
-    input:
-        config = ancient('config.sh'),
-        ann = rules.download_tcga.output.ann,
-        py = 'gdc_biobambam.py',
-        sh = 'gdc_biobambam.sh',
-        sub = 'shuffle.sh'
-    params:
-        run_type = 'test',
-        read_format = 'paired',
-        batch_size = 40
-    output:
-        '/scratch/chd5n/herv/fastq/gdc_biobambam.idx'
-    shell:
-        '''
-        source {input.config}
-        module load anaconda/5.2.0-py3.6
-        python {input.py} --{params.run_type} \
-            --read_format {params.read_format} \
-            --batch_size {params.batch_size}
-        '''
-
 rule quant_check:
     input:
         config = ancient('config.sh'),
-        a = '/scratch/chd5n/field-effect/annotations/cohort_A.tsv',
-        b = '/scratch/chd5n/field-effect/annotations/cohort_B.tsv',
-        c = '/scratch/chd5n/field-effect/annotations/cohort_C.tsv',
+        a = '/scratch/chd5n/field-effect/annotations/metaPhenoPeUqSampIndSmpAll.tsv',
+        b = '/scratch/chd5n/field-effect/annotations/metaPhenoPeUqSampNatCrcPar.tsv',
+        c = '/scratch/chd5n/field-effect/annotations/metaPhenoSeUqSampIndSmpAll.tsv',
         py = 'quant_check.py'
     output:
         d = '/scratch/chd5n/herv/done.txt',
@@ -173,7 +173,10 @@ rule quant_check:
         find $salqnt_dir -mindepth 1 -maxdepth 1 -type d | awk -v FS="/" '
             !($0~/tcga-se/) {{print $NF}}' | sort > {output.d}
         module load anaconda/5.2.0-py3.6
-        python {input.py}
+        python {input.py} \
+            --tsv_a {input.a} \
+            --tsv_b {input.b} \
+            --tsv_c {input.c}
         '''
 
 rule download_ncbi:
@@ -218,3 +221,44 @@ rule compress_fastq:
         sbatch --output=compress_fastq.out {input.sh} {params.target} \
             2> {output.err}
         '''
+
+rule setup_dge:
+    '''
+    -- make pheno file for each cohort
+    -- make tximport objects based on pheno
+    '''
+    input:
+        cfg = ancient('config.sh'),
+        pyid = 'setup_herv_ids.py',
+        pyph =  'pheno.py',
+        # sh = 'txi.sh',
+        # R = 'txi.R',
+        a = rules.quant_check.input.a,
+        b = rules.quant_check.input.b,
+        c = rules.quant_check.input.c,
+        ann = rules.download_tcga.output.ann,
+        bed = rules.setup_herv_bed.output
+    params:
+        # cohort = 'A'
+        # cohort = 'B'
+        cohort = 'C'
+    output:
+        ids = '/scratch/chd5n/herv/genmod/herv_ids.tsv',
+        # pheno = '/scratch/chd5n/herv/annotations/pheno_A.tsv'
+        # pheno = '/scratch/chd5n/herv/annotations/pheno_B.tsv'
+        pheno = '/scratch/chd5n/herv/annotations/pheno_C.tsv'
+        #txi = '/scratch/chd5n/herv/rdata/txi_{params.cohort}.Rda'
+    shell:
+        '''
+        source {input.cfg}
+        module load anaconda/5.2.0-py3.6
+        python {input.pyid} \
+            --bed {input.bed}
+        python {input.pyph} \
+            --cohort {params.cohort} \
+            --tcga_ann {input.ann} \
+            --tsv_a {input.a} \
+            --tsv_b {input.b} \
+            --tsv_c {input.c}
+        '''
+        # sbatch --output=setup_txi.out {input.sh} {params.cohort}

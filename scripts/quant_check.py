@@ -7,6 +7,7 @@
 
 
 import os
+import argparse
 
 
 modname = 'quant_check'
@@ -57,10 +58,10 @@ def write_missing(target,info,done):
             outfile.write('')
 
 
-def main():
-    a = '/scratch/chd5n/field-effect/annotations/cohort_A.tsv'
-    b = '/scratch/chd5n/field-effect/annotations/cohort_B.tsv'
-    c = '/scratch/chd5n/field-effect/annotations/cohort_C.tsv'
+def main(args):
+    a = args.tsv_a
+    b = args.tsv_b
+    c = args.tsv_c
     d = ''.join([os.environ['work_dir'], 'done.txt'])
     ainfo = get_info(a)
     binfo = get_info(b)
@@ -78,6 +79,22 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description='quant_check')
+    parser.add_argument(
+        '--tsv_a', help='path to cohort A TSV', action='store', dest='tsv_a'
+    )
+    parser.add_argument(
+        '--tsv_b', help='path to cohort B TSV', action='store', dest='tsv_b'
+    )
+    parser.add_argument(
+        '--tsv_c', help='path to cohort C TSV', action='store', dest='tsv_c'
+    )
+    parser.set_defaults(
+        tsv_a='/scratch/chd5n/field-effect/annotations/cohort_A.tsv',
+        tsv_b='/scratch/chd5n/field-effect/annotations/cohort_B.tsv',
+        tsv_c='/scratch/chd5n/field-effect/annotations/cohort_C.tsv'
+    )
+    args = parser.parse_args()
+    main(args)
 else:
     print('functions loaded for', modname)
