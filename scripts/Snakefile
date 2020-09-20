@@ -231,34 +231,36 @@ rule setup_dge:
         cfg = ancient('config.sh'),
         pyid = 'setup_herv_ids.py',
         pyph =  'pheno.py',
-        # sh = 'txi.sh',
-        # R = 'txi.R',
+        sh = 'txi.sh',
+        R = 'txi.R',
         a = rules.quant_check.input.a,
         b = rules.quant_check.input.b,
         c = rules.quant_check.input.c,
         ann = rules.download_tcga.output.ann,
-        bed = rules.setup_herv_bed.output
+        fa = rules.setup_herv_fasta.output
     params:
-        # cohort = 'A'
+        cohort = 'A'
         # cohort = 'B'
-        cohort = 'C'
+        # cohort = 'C'
     output:
         ids = '/scratch/chd5n/herv/genmod/herv_ids.tsv',
-        # pheno = '/scratch/chd5n/herv/annotations/pheno_A.tsv'
+        pheno = '/scratch/chd5n/herv/annotations/pheno_A.tsv'
         # pheno = '/scratch/chd5n/herv/annotations/pheno_B.tsv'
-        pheno = '/scratch/chd5n/herv/annotations/pheno_C.tsv'
-        #txi = '/scratch/chd5n/herv/rdata/txi_{params.cohort}.Rda'
+        # pheno = '/scratch/chd5n/herv/annotations/pheno_C.tsv'
+        ## txi = '/scratch/chd5n/herv/rdata/txi_A.Rda'
+        ## txi = '/scratch/chd5n/herv/rdata/txi_B.Rda'
+        ## txi = '/scratch/chd5n/herv/rdata/txi_C.Rda'
     shell:
         '''
         source {input.cfg}
         module load anaconda/5.2.0-py3.6
         python {input.pyid} \
-            --bed {input.bed}
+            --fasta {input.fa}
         python {input.pyph} \
             --cohort {params.cohort} \
             --tcga_ann {input.ann} \
             --tsv_a {input.a} \
             --tsv_b {input.b} \
             --tsv_c {input.c}
+        sbatch --output=setup_txi.out {input.sh} {params.cohort}
         '''
-        # sbatch --output=setup_txi.out {input.sh} {params.cohort}
