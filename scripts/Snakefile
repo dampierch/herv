@@ -264,3 +264,22 @@ rule setup_dge:
             --tsv_c {input.c}
         sbatch --output=setup_txi.out {input.sh} {params.cohort}
         '''
+
+rule dge:
+    input:
+        cfg = ancient('config.sh'),
+        sh = 'dge.sh',
+        R = 'dge.R'
+    params:
+        cohort = 'A'
+        # cohort = 'B'
+        # cohort = 'C'
+    output:
+        ## dge = '/scratch/chd5n/herv/rdata/dge_A.Rda'
+        ## dge = '/scratch/chd5n/herv/rdata/dge_B.Rda'
+        ## dge = '/scratch/chd5n/herv/rdata/dge_C.Rda'
+    shell:
+        '''
+        source {input.cfg}
+        sbatch --output=dge.out {input.sh} {params.cohort}
+        '''
