@@ -278,8 +278,10 @@ rule dge:
         ## dge = '/scratch/chd5n/herv/rdata/dge_A.Rda'
         ## dge = '/scratch/chd5n/herv/rdata/dge_B.Rda'
         ## dge = '/scratch/chd5n/herv/rdata/dge_C.Rda'
+        ## res = '/scratch/chd5n/herv/results/tables/res_A_CRCvNAT_all.tsv'
+        ## res = '/scratch/chd5n/herv/results/tables/res_A_CRCvNAT_hrv.tsv'
     shell:
         '''
         source {input.cfg}
-        sbatch --output=dge.out {input.sh} {params.cohort}
+        sbatch --output=dge_{params.cohort}.out {input.sh} {params.cohort}
         '''
