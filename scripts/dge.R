@@ -32,7 +32,12 @@ load_inputs <- function(target1, target2, target3) {
     df <- data.frame(
         readr::read_tsv(target2)
     )
-    df$phenotype <- factor(df$phenotype, levels=c("HLT", "NAT", "CRC"))
+    if (cohort != "B") {
+        df$phenotype <- factor(df$phenotype, levels=c("HLT", "NAT", "CRC"))
+    } else {
+        df$phenotype <- factor(df$phenotype, levels=c("NAT", "CRC"))
+        df$subject_id <- factor(df$subject_id)
+    }
     hv <- data.frame(
         readr::read_tsv(target3)
     )
@@ -46,7 +51,11 @@ create_dds <- function(l) {
     ## pre-filter genes prior to normalization
     ## get size-factors and normalized counts
     cat("Creating pre-filtered dds\n")
-    dds <- DESeqDataSetFromTximport(l$txi, l$colData, ~ phenotype)
+    if (cohort != "B") {
+        dds <- DESeqDataSetFromTximport(l$txi, l$colData, ~ phenotype)
+    } else {
+        dds <- DESeqDataSetFromTximport(l$txi, l$colData, ~ subject_id + phenotype)
+    }
     count_lim <- 0
     sample_lim <- 1/2 * ncol(dds)
     keep <- rowSums( counts(dds) > count_lim ) >= sample_lim
@@ -91,23 +100,30 @@ run_sva <-function(l, dds) {
     return(dds)
 }
 
-batch_adjustment <- function(dds) {
-    ## adjust counts for batch
-    cat("Adjusting counts for batch\n")
+
+count_adjustment <- function(dds) {
+    ## adjust counts with variance stabilizing transformation for all cohorts
+    ## adjust counts for batch effect for cohorts A and C
+    cat("Adjusting counts\n")
     vsd <- vst(dds, blind=FALSE)
     counts <- assay(vsd)
-    design <- model.matrix(~ phenotype, data=colData(vsd))
-    idx <- base::grepl("sv\\d", colnames(colData(dds)))
-    covs <- colnames(colData(dds))[idx]
-    covariates <- colData(vsd)[, covs]
-    correctedY <- limma::removeBatchEffect(
-      counts, covariates=covariates, design=design
-    )
-    correctedY <- t(correctedY)
-    correctedY[correctedY < 0] <- 0
-    adj_counts <- t(correctedY)
+    if (cohort != "B") {
+        design <- model.matrix(~ phenotype, data=colData(vsd))
+        idx <- base::grepl("sv\\d", colnames(colData(dds)))
+        covs <- colnames(colData(dds))[idx]
+        covariates <- colData(vsd)[, covs]
+        correctedY <- limma::removeBatchEffect(
+            counts, covariates=covariates, design=design
+        )
+        correctedY <- t(correctedY)
+        correctedY[correctedY < 0] <- 0
+        adj_counts <- t(correctedY)
+    } else {
+        adj_counts <- counts
+    }
     return(adj_counts)
 }
+
 
 filter_genes <- function(dds, adj, hervs) {
     ## filter for protein coding and moderately expressed herv genes
@@ -136,8 +152,30 @@ filter_genes <- function(dds, adj, hervs) {
     return(dds)
 }
 
-test_dge <- function(dds) {
-    ## test for differential expression, extract and display results
+
+map_ids <- function(res) {
+    ## mapping of ensembl gene ids to gene symbols and entrez ids
+    tab <- subset(
+        data.frame(
+            ensembldb::genes(
+                EnsDb.Hsapiens.v86,
+                columns=c("gene_id", "gene_name", "entrezid")
+            )
+        ),
+        select=c("gene_id", "gene_name", "entrezid")
+    )
+    x <- res[, "gene_id"]
+    idx <- match(x, tab$gene_id)
+    res[, "gene_name"] <- tab[idx, "gene_name"]
+    res[, "entrez_id"] <- tab[idx, "entrezid"]
+    res <- res[, c(8:10,1:7)]
+    return(res)
+}
+
+
+test_dge <- function(dds, adj, fc=2, alpha=0.05) {
+    ## test for differential expression, extract and sort results
+    ## adj counts added to dgeobj for downstream visualization
     cat("Testing for differential expression\n")
     dds <- DESeq(dds)
     cons <- list()
@@ -145,21 +183,81 @@ test_dge <- function(dds) {
     for (i in seq_len(ncol(m))) {
         cons[[i]] <- c("phenotype", rev(m[, i]))
         names(cons) <- c(
-            names(cons)[seq_len(length(cons) - 1)], paste(rev(m[, i]), collapse="v")
+            names(cons)[seq_len(length(cons) - 1)],
+            paste(rev(m[, i]), collapse="v")
         )
     }
     res <- list()
     for (i in seq_len(length(cons))) {
-        res[[i]] <- results(dds, contrast=cons[[i]], alpha=0.05)  ## default alpha is 0.1
+        res[[i]] <- results(
+            dds,
+            lfcThreshold=log2(fc),
+            altHypothesis="greaterAbs",
+            contrast=cons[[i]],
+            alpha=alpha
+        )
+        res[[i]] <- res[[i]][order(res[[i]][, "padj"], decreasing=FALSE), ]
+        res[[i]][, "rank"] <- seq(1, nrow(res[[i]]))
+        res[[i]][, "gene_id"] <- rownames(res[[i]])
+        res[[i]] <- map_ids(res[[i]])
     }
     names(res) <- names(cons)
-    return(setNames(list(dds, res), c("final", "results")))
+    return(setNames(list(dds, adj, res), c("dds", "adj", "res")))
 }
 
-write_dge <- function(dgeobj, target) {
-  save(dgeobj, file=target)
-  cat("dgeobj written to", target, "\n")
+
+check_dir <- function(dir) {
+    ## check if intended output directory exists and create if it does not
+    d <- "/"
+    for (e in unlist(strsplit(dir, "/"))[2:length(unlist(strsplit(dir, "/")))]) {
+        d <- paste0(d, e, "/")
+        if (file.exists(d)) {
+            cat(d, "exists\n")
+        } else {
+            cat(d, "does not exist; creating now\n")
+            dir.create(d)
+        }
+    }
 }
+
+
+write_dge <- function(dgeobj, target) {
+    cat("Writing dgeobj to file\n")
+    save(dgeobj, file=target)
+    cat("dgeobj written to", target, "\n")
+}
+
+
+write_gene_list <- function(res, herv=FALSE) {
+    cat("Writing results table to file\n")
+    for (i in seq_len(length(res))) {
+        con <- names(res)[i]
+        if (herv) {
+            target <- paste0(
+                Sys.getenv("table_dir"), "res_", cohort, "_", con, "_hrv.tsv"
+            )
+        } else {
+            target <- paste0(
+                Sys.getenv("table_dir"), "res_", cohort, "_", con, "_all.tsv"
+            )
+        }
+        write.table(res[[i]], file=target, quote=FALSE, sep="\t",
+            row.names=FALSE, col.names=TRUE)
+        cat("gene list written to", target, "\n")
+    }
+}
+
+
+extract_hervs <- function(res) {
+    ## extract herv-specific results table
+    cat("Extracting HERV-specific results\n")
+    for (i in seq_len(length(res))) {
+        keep <- grepl("HERV", res[[i]][, "gene_id"])
+        res[[i]] <- res[[i]][keep, ]
+    }
+    return(res)
+}
+
 
 main <- function() {
     target1 <- paste0(Sys.getenv("rdata_dir"), "txi_", cohort, ".Rda")
@@ -167,31 +265,22 @@ main <- function() {
     target3 <- paste0(Sys.getenv("genmod_dir"), "herv_ids.tsv")
     inputs <- load_inputs(target1, target2, target3)
     dds <- create_dds(inputs)
-    svaobj <- prep_sva(dds)
-    ddssva <- run_sva(svaobj, dds)
-    vsdadj <- batch_adjustment(ddssva)
-    ddssva <- filter_genes(ddssva, vsdadj, inputs$hervs)
-    dgeobj <- test_dge(ddssva)
+    if (cohort != "B") {
+        svaobj <- prep_sva(dds)
+        dds <- run_sva(svaobj, dds)
+    }
+    adj <- count_adjustment(dds)
+    dds <- filter_genes(dds, adj, inputs$hervs)
+    dgeobj <- test_dge(dds, adj)
     target <- paste0(Sys.getenv("rdata_dir"), "dge_", cohort, ".Rda")
+    check_dir(Sys.getenv("rdata_dir"))
     write_dge(dgeobj, target)
-
-    print(lapply(dgeobj$results, head))
-    print(lapply(dgeobj$results, summary))
+    check_dir(Sys.getenv("table_dir"))
+    write_gene_list(dgeobj$res)
+    res <- extract_hervs(dgeobj$res)
+    write_gene_list(res, herv=TRUE)
+    print(lapply(dgeobj$res, summary))
 }
 
+
 main()
-
-# x <- dgeobj$results$CRCvNAT[order(dgeobj$results$CRCvNAT[,"padj"], decreasing=FALSE),]
-
-
-# r <- res[[1]][order(res[[1]]$padj), ]
-# r <- res[[2]][order(res[[2]]$padj), ]
-# r <- res[[3]][order(res[[3]]$padj), ]
-# r$rank <- seq(1, nrow(r))
-#
-# ## save gene lists
-# setwd("/scratch/chd5n/")
-# file <- paste0("natvhlt.tsv")
-# file <- paste0("crcvhlt.tsv")
-# file <- paste0("crcvnat.tsv")
-# write.table(r, file=file, quote=FALSE, sep="\t", row.names=TRUE, col.names=TRUE)

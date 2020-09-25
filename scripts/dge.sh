@@ -3,8 +3,8 @@
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=50000
-#SBATCH --time=04:30:00
+#SBATCH --mem=20000
+#SBATCH --time=04:00:00
 #SBATCH --partition=standard
 #SBATCH --account=chd5n_alloc
 #SBATCH --mail-type=END
@@ -14,7 +14,7 @@
 ## -- for use in snakemake workflow
 ## -- usage: snakemake setup_dge
 
-## -- perform: ?h, ?MB for 834 quant.sf files in cohort A
+## -- perform: 0.5h, 10GB for cohort A
 
 
 script_name=dge.sh
