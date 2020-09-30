@@ -18,6 +18,9 @@ by parent transcript into BED blocks
 -- ouput coordinates for aggregated exons (i.e. intron-less transcripts) in
 BED12 format
 
+-- number of ERE transcripts: 1,001,931
+-- number of select transcripts: 16,336
+
 -- requires config.sh to set environmental variables
 -- for use in snakemake workflow
 -- usage: snakemake setup_herv_bed

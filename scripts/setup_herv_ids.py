@@ -1,6 +1,7 @@
 '''
 this script assembles a table mapping transcript id to HERV name for select
 HERV transcripts from Attig et al.
+-- number of HERV genes among select transcripts: 5,025
 -- executes on front end
 -- script should be called as part of snakemake pipeline
 -- used from within snakemake, so print statements not part of interactive
