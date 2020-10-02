@@ -285,3 +285,24 @@ rule dge:
         source {input.cfg}
         sbatch --output=dge_{params.cohort}.out {input.sh} {params.cohort}
         '''
+
+rule results:
+    input:
+        cfg = ancient('config.sh'),
+        sh = 'results.sh',
+        R = 'results.R'
+    params:
+        cohort = 'A'
+        # cohort = 'B'
+        # cohort = 'C'
+    output:
+        # '/scratch/chd5n/herv/results/plots/herv-field-cor_A.pdf',
+        # '/scratch/chd5n/herv/results/plots/herv-element-sum_A.pdf',
+        # '/scratch/chd5n/herv/results/plots/herv-volcano_A.pdf',
+        # '/scratch/chd5n/herv/results/plots/herv-volcano_B.pdf,
+        # '/scratch/chd5n/herv/results/plots/herv-volcano_C.pdf,
+    shell:
+        '''
+        source {input.cfg}
+        sbatch --output=results_{params.cohort}_v1.out {input.sh} {params.cohort}
+        '''
