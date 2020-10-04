@@ -14,6 +14,7 @@
 
 ## load dgeobj into list and herv-specific results into dataframe
 ## create boxplots showing top herv hits
+
 ## try to highlight samples with MSS
 
 ## try showing alignments of top hit along with sequence and predictied protein
@@ -26,6 +27,8 @@ library(DESeq2)
 library(ashr)
 library(ggplot2)
 library(cowplot)
+library(reshape2)
+library(dplyr)
 
 
 args <- commandArgs(trailingOnly=TRUE)
@@ -61,7 +64,6 @@ ggp_theme_col <- ggp_theme_default +
     theme(
         plot.margin=margin(t=0.5, r=0.5, b=0.5, l=0.5, unit="lines"),
         plot.title=element_text(size=12, face="plain", hjust=0.5),
-        plot.subtitle=element_text(size=10, face="plain", hjust=0.5),
         axis.text.x=element_text(size=10, face="plain", angle=45, hjust=1),
         axis.text.y=element_text(size=10, face="plain"),
         axis.line.x.bottom=element_blank(),
@@ -72,9 +74,72 @@ ggp_theme_col <- ggp_theme_default +
 
 ggp_theme_vol <- ggp_theme_default +
     theme(
-        plot.margin=margin(t=0.5, r=0.5, b=0.5, l=0.5, unit="lines"),
-        legend.position="none"
+        plot.margin=margin(t=0.25, r=0.25, b=0.25, l=0.25, unit="lines"),
+        legend.key=element_blank(),
+        legend.key.size=unit(0.001, "cm"),
+        legend.key.width=unit(0.001, "cm"),
+        legend.position=c(0.18, 0.9),
+        legend.spacing.x=unit(0.001, "cm"),
+        legend.spacing.y=unit(0.001, "cm"),
+        legend.text=element_text(size=8, margin=margin(t=0.001))
     )
+
+
+ggp_theme_box <- ggp_theme_default +
+    theme(
+        plot.margin=margin(t=0.5, r=1, b=0.5, l=1, unit="lines"),
+        axis.text.x=element_text(size=9, face="plain", angle=45, hjust=1),
+        axis.text.y=element_text(size=10, face="plain"),
+        legend.position="none",
+        legend.key=element_blank(),
+        legend.key.size=unit(0.75, "cm"),
+        legend.key.width=unit(0.75, "cm"),
+        legend.spacing.x=unit(0.5, "cm"),
+        legend.spacing.y=unit(0.5, "cm"),
+        legend.text=element_text(size=9, margin=margin(t=0.1))
+    )
+
+
+draw_key_default <- function(data, params, size) {
+    ## this function is here in case GeomBar$draw_key must be manipulated and
+    ## then reset once occasion for altered parameters done
+    ## https://stackoverflow.com/questions/11366964/is-there-a-way-to-change-the-spacing-between-legend-items-in-ggplot2
+    if (is.null(data$size)) {
+        data$size <- 0.5
+    }
+    lwd <- min(data$size, min(size) / 4)
+    grid::rectGrob(
+        width = grid::unit(1, "npc") - grid::unit(lwd, "mm"),
+        height = grid::unit(1, "npc") - grid::unit(lwd, "mm"),
+        gp = grid::gpar(
+            col = data$colour %||% NA,
+            fill = alpha(data$fill %||% "grey20", data$alpha),
+            lty = data$linetype %||% 1,
+            lwd = lwd * .pt,
+            linejoin = params$linejoin %||% "mitre",
+            lineend = if (identical(params$linejoin, "round")) "round" else "square"
+        )
+    )
+}
+
+
+draw_key_large <- function(data, params, size) {
+    ## this function is here in case GeomBar$draw_key must be reset to allow for
+    ## larger spacing between legend keys; not used in this script
+    ## https://stackoverflow.com/questions/11366964/is-there-a-way-to-change-the-spacing-between-legend-items-in-ggplot2
+    lwd <- min(data$size, min(size) / 4)
+    grid::rectGrob(
+        width = grid::unit(0.6, "npc"),
+        height = grid::unit(0.6, "npc"),
+        gp = grid::gpar(
+            col = data$colour,
+            fill = alpha(data$fill, data$alpha),
+            lty = data$linetype,
+            lwd = lwd * .pt,
+            linejoin = "mitre"
+        )
+    )
+}
 
 
 check_dir <- function(dir) {
@@ -107,8 +172,10 @@ set_paths <- function(in_path, in_name) {
 }
 
 
-load_res_tables <- function(study, cohort, scope="all") {
+load_res_tables <- function(study, scope="all") {
     ## scope can be "all" or "hrv"
+    ## order genes by gene_id instead of rank so that order is consistent across
+    ## different results tables to facilitate comparisons across tables
     cat("Loading results tables\n")
     if (study == "herv") {
         in_path <- Sys.getenv("table_dir")
@@ -152,7 +219,7 @@ load_res_tables <- function(study, cohort, scope="all") {
 plot_cor <- function(x, y, label, r) {
     df <- data.frame(herv=x, field=y)
     ggp_title <- "Pearson Correlation"
-    ggp_subtitle <- sub("CRC", "TUM", label)
+    ggp_subtitle <- label
     ggp_xlab <- "L2FC from HERV Study"
     ggp_ylab <- "L2FC from Field Effect Study"
     txt <- paste("R =", round(r, 2))
@@ -179,7 +246,7 @@ calc_cor <- function(l1, l2, method="pearson") {
         intsx <- intersect(l1[[i]]$gene_id, l2[[i]]$gene_id)
         x <- l1[[i]][l1[[i]]$gene_id %in% intsx, "log2FoldChange"]
         y <- l2[[i]][l2[[i]]$gene_id %in% intsx, "log2FoldChange"]
-        label <- unlist(strsplit(names(l1)[i], "_"))[3]
+        label <- sub("CRC", "TUM", unlist(strsplit(names(l1)[i], "_"))[3])
         r[[label]] <- cor(x, y, method=method)
         p[[label]] <- plot_cor(x, y, label, r[[label]])
     }
@@ -190,25 +257,21 @@ calc_cor <- function(l1, l2, method="pearson") {
 write_cor <- function(plotlist, target) {
     p_width <- 9
     p_height <- 3
-    pdf(file=target, width=p_width, height=p_height)
-    print(
-        cowplot::plot_grid(
-            plotlist[["NATvHLT"]], plotlist[["TUMvNAT"]], plotlist[["TUMvHLT"]],
-            nrow=1,
-            ncol=3,
-            labels=c("A", "B", "C")
-        )
+    fig <- cowplot::plot_grid(
+        plotlist[["NATvHLT"]], plotlist[["TUMvNAT"]], plotlist[["TUMvHLT"]],
+        nrow=1, ncol=3,
+        labels=c("A", "B", "C")
     )
+    pdf(file=target, width=p_width, height=p_height)
+    print(fig)
     dev.off()
     cat("figure written to", target, "\n")
 }
 
 
 correlation_analysis <- function() {
-    study <- "herv"
-    tab_herv <- load_res_tables(study, cohort)
-    study <- "field"
-    tab_field <- load_res_tables(study, cohort)
+    tab_herv <- load_res_tables("herv")
+    tab_field <- load_res_tables("field")
     l <- calc_cor(tab_herv, tab_field)
     target_dir <- Sys.getenv("plot_dir")
     check_dir(target_dir)
@@ -246,16 +309,30 @@ load_dgeobj <- function(target) {
 }
 
 
-nested_split <- function(e) {
-    x <- unlist(e)[2]
-    y <- unlist(strsplit(x, "-"))[1]
-    z <- substr(y, 1, 5)
-    return(z)
+unpack_id <- function(e) {
+    ## unpacks information in herv_id
+    x <- unlist(strsplit(e[2], "-"))[1]
+    hvnm_s <- substr(x, 1, 5)
+    hvnm_l <- x
+    chrom <- paste0("chr", e[3])
+    start <- as.numeric(e[4])
+    stop <- as.numeric(e[5])
+    return(setNames(c(hvnm_s, hvnm_l, chrom, start, stop),
+        c("hrvnm_s", "hrvnm_l", "chrom", "start", "stop"))
+    )
 }
 
 
 count_herv_cats <- function(cv) {
-    nms <- unlist(base::lapply(strsplit(cv, "[|]"), nested_split))
+    nms <- base::unlist(
+        base::lapply(
+            base::lapply(
+                strsplit(cv, "[|]"), unpack_id
+            ),
+            head, 1
+        ),
+        use.names=FALSE
+    )
     cats <- c(
         "HERVE", "HERVH", "HERVK", "HERVL"
     )
@@ -400,7 +477,7 @@ shrink_effect <- function(dgeobj) {
             type="ashr"
         )
         if (all(res$gene_id == tmp$gene_id)) {
-            res$group <- "Not Sig."
+            res$group <- "Other"
             idx <- res$padj < 0.05 & grepl("HERV", res$gene_id) & tmp$log2FoldChange < 0
             res[idx, "group"] <- "HERV Down"
             idx <- res$padj < 0.05 & grepl("HERV", res$gene_id) & tmp$log2FoldChange > 0
@@ -427,8 +504,8 @@ shrink_effect <- function(dgeobj) {
 plot_volcano <- function(df, label) {
     ## repeated calls to geom_point ensure HERV point is last point plotted
     ggp_subtitle <- label
-    ggp_xlab <- "Log2 Fold Change"
-    ggp_ylab <- "-log10(pvalue)"
+    ggp_xlab <- expression("Log"["2"]*" Fold Change")
+    ggp_ylab <- expression("-log"["10"]*"("*italic("P")*")")
     ggp <- ggplot(
             data=df,
             aes(x=effect, y=logp, colour=group, size=group, alpha=group)
@@ -449,22 +526,38 @@ plot_volcano <- function(df, label) {
             x=ggp_xlab,
             y=ggp_ylab
         ) +
-        scale_colour_manual(values=c("blue", "red", "grey")) +
-        scale_size_manual(values=c(1.75, 1.75, 1)) +
-        scale_alpha_manual(values=c(0.5, 0.5, 0.75)) +
         ggp_theme_vol
-    if (label == "NATvHLT") {
+    if (cohort %in% c("A", "C")) {
         ggp <- ggp +
-            scale_x_continuous(limits=c(-7, 7)) +
-            scale_y_continuous(limits=c(-1, 60))
-    } else if (label == "TUMvHLT") {
+            scale_colour_manual(values=c("blue", "red", "grey")) +
+            scale_size_manual(values=c(1.75, 1.75, 1)) +
+            scale_alpha_manual(values=c(0.5, 0.5, 0.75)) +
+            guides(colour=guide_legend(label.position="right",
+                override.aes=list(alpha=1, size=1.75))
+            )
+        if (label == "NATvHLT") {
+            ggp <- ggp +
+                scale_x_continuous(limits=c(-7, 7)) +
+                scale_y_continuous(limits=c(-1, 60))
+        } else if (label == "TUMvHLT") {
+            ggp <- ggp +
+                scale_x_continuous(limits=c(-11, 11)) +
+                scale_y_continuous(limits=c(-1, 300))
+        } else {
+            ggp <- ggp +
+                scale_x_continuous(limits=c(-10, 10)) +
+                scale_y_continuous(limits=c(-1, 175))
+        }
+    } else if (cohort == "B") {
         ggp <- ggp +
-            scale_x_continuous(limits=c(-11, 11)) +
-            scale_y_continuous(limits=c(-1, 300))
-    } else {
-        ggp <- ggp +
+            scale_colour_manual(values=c("red", "grey")) +
+            scale_size_manual(values=c(1.75, 1)) +
+            scale_alpha_manual(values=c(0.5, 0.75)) +
             scale_x_continuous(limits=c(-10, 10)) +
-            scale_y_continuous(limits=c(-1, 175))
+            scale_y_continuous(limits=c(-1, 60)) +
+            guides(colour=guide_legend(label.position="right",
+                override.aes=list(alpha=1, size=1.75))
+            )
     }
     return(ggp)
 }
@@ -516,6 +609,157 @@ volcano_analysis <- function(dgeobj) {
 }
 
 
+parse_band <- function(e, cytomap) {
+    ## used within map_cytoband()
+    cond1 <- cytomap$chrom == e["chrom"]
+    cond2 <- cytomap$start <= as.numeric(e["start"])
+    cond3 <- cytomap$stop >= as.numeric(e["start"])
+    idx <- cond1 & cond2 & cond3
+    return(paste(
+        e["hrvnm_l"],
+        paste0(strsplit(e["chrom"], "chr")[[1]][2], cytomap[idx, "band"])
+    ))
+}
+
+
+map_cytoband <- function(tophervs) {
+    target <- paste0(Sys.getenv("ref_dir"), "annotation/ucsc/",
+        "cytoBand.txt.gz"
+    )
+    con <- gzfile(target, "rb")
+    cytomap <- readr::read_tsv(con,
+        col_names=c("chrom", "start", "stop", "band", "giemsa")
+    )
+    close(con)
+    l <- setNames(base::lapply(strsplit(tophervs, "[|]"), unpack_id), tophervs)
+    tophervs2 <- base::lapply(l, parse_band, cytomap)
+    return(tophervs2)
+}
+
+
+select_tophervs <- function(model="naive") {
+    ## model indicates underlying assumption about gene expression in NAT vs HLT
+    ## field or naive; field assumes NAT is intermediate between HLT and TUM;
+    ## naive assumes NAT == HLT
+    cat("Selecting top hits for box plots\n")
+    restabs <- load_res_tables("herv", scope="hrv")
+    nms <- character()
+    for (i in seq_len(length(restabs))) {
+        nms <- c(nms,
+            sub("CRC", "TUM", unlist(strsplit(names(restabs)[i], "_"))[3])
+        )
+    }
+    names(restabs) <- nms
+    conds <- list()
+    conds[[1]] <- restabs[["NATvHLT"]]$padj < 0.05
+    conds[[2]] <- restabs[["NATvHLT"]]$log2FoldChange > 0
+    conds[[3]] <- restabs[["TUMvNAT"]]$padj < 0.05
+    conds[[4]] <- restabs[["TUMvNAT"]]$log2FoldChange > 0
+    conds[[5]] <- restabs[["TUMvHLT"]]$padj < 0.05
+    conds[[6]] <- restabs[["TUMvHLT"]]$log2FoldChange > 0
+    if (model == "field") {
+        idx <- conds[[1]] & conds[[2]] & conds[[3]] & conds[[4]]  ## A: 1 gene
+    } else {
+        idx <- conds[[3]] & conds[[4]] & conds[[5]] & conds[[6]]  ## A: 11 genes
+    }
+    tophervs <- restabs[["TUMvHLT"]][idx, "gene_id"]
+    tophervs2 <- map_cytoband(tophervs)
+    return(tophervs2)
+}
+
+
+format_counts <- function(tophervs, dgeobj) {
+    cat("Formatting counts for box plots\n")
+    idx <- rownames(dgeobj$adj) %in% names(tophervs)
+    mx <- dgeobj$adj[idx, ]
+    dimnames(mx)[[1]] <- unlist(tophervs, use.names=FALSE)
+    dimnames(mx)[[2]] <- gsub("CRC", "TUM",
+        as.character(colData(dgeobj$dds)$phenotype)
+    )
+    df <- reshape2::melt(mx)
+    colnames(df) <- c("herv_id", "phenotype", "count")
+    df$phenotype <- factor(df$phenotype, levels=c("HLT", "NAT", "TUM"))
+    dat <- dplyr::group_by(base::subset(df, phenotype=="TUM"), herv_id) %>%
+        dplyr::summarise(mean=mean(count)) %>% dplyr::arrange(dplyr::desc(mean))
+    ord <- as.character(dat$herv_id)
+    df$herv_id <- factor(df$herv_id, levels=ord)
+    if (cohort == "A") {
+        df1 <- df[df$herv_id %in% ord[1:6], ]
+        df1$herv_id <- factor(df1$herv_id)
+        df2 <- df[df$herv_id %in% ord[7:11], ]
+        df2$herv_id <- factor(df2$herv_id)
+        dfs <- setNames(list(df1, df2), c("upper", "lower"))
+    } else {
+        dfs <- list(df)
+    }
+    return(dfs)
+}
+
+
+plot_counts <- function(dfs) {
+    cat("Making box plots\n")
+    color_values <- c("blue", "grey", "red")
+    ggp_title <- "Expression Levels of Select HERV Genes"
+    ggp_ylab <- "Scaled Counts"
+    lidx <- 0
+    pl <- list()
+    for (df in dfs) {
+        lidx <- lidx + 1
+        ggp <- ggplot(df, aes(x=herv_id, y=count, colour=phenotype)) +
+            geom_boxplot(outlier.size=-1, position=position_dodge2()) +
+            geom_point(size=0.25, alpha=0.5, position=position_jitterdodge()) +
+            labs(title=ggp_title, x=element_blank(), y=ggp_ylab) +
+            scale_colour_manual(values=color_values) +
+            ggp_theme_box
+        if (cohort == "A" & length(levels(df$herv_id)) < 6) {
+            ggp <- ggp +
+                theme(legend.position="right") +
+                labs(title=element_blank())
+        }
+        pl[[lidx]] <- ggp
+    }
+    return(pl)
+}
+
+
+write_counts <- function(plotlist, target) {
+    if (length(plotlist) > 1) {
+        p_width <- 7
+        p_height <- 5
+        fig <- cowplot::plot_grid(
+            plotlist=plotlist,
+            nrow=2,
+            ncol=1,
+            labels=c("A", NULL)
+        )
+    } else {
+        p_width <- 5
+        p_height <- 3
+        fig <- cowplot::plot_grid(
+            plotlist=plotlist,
+            nrow=1,
+            ncol=1,
+            labels=c("A")
+        )
+    }
+    pdf(file=target, width=p_width, height=p_height)
+    print(fig)
+    dev.off()
+    cat("figure written to", target, "\n")
+}
+
+
+tophervs_analysis <- function(dgeobj) {
+    tophervs <- select_tophervs()
+    dfs <- format_counts(tophervs, dgeobj)
+    pl <- plot_counts(dfs)
+    target_dir <- Sys.getenv("plot_dir")
+    check_dir(target_dir)
+    target <- paste0(target_dir, "herv-counts_", cohort, ".pdf")
+    write_counts(pl, target)
+}
+
+
 main <- function() {
     if (cohort == "A") {
         correlation_analysis()
@@ -525,7 +769,16 @@ main <- function() {
         dgeobj <- load_dgeobj(target)
     }
     volcano_analysis(dgeobj)
+    if (cohort %in% c("A", "C")) {
+        tophervs_analysis(dgeobj)
+    }
 }
 
 
 main()
+
+
+
+
+# target <- "/scratch/chd5n/test-fig.pdf"
+# ggsave(target, p, device="pdf", width=15, height=4, units="in")

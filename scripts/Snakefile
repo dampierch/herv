@@ -287,6 +287,9 @@ rule dge:
         '''
 
 rule results:
+    '''
+    wget --timestamping "ftp://hgdownload.cse.ucsc.edu/goldenPath/hg38/database/cytoBand.txt.gz" -O /scratch/chd5n/reference-genome/annotation/ucsc/cytoBand.txt.gz
+    '''
     input:
         cfg = ancient('config.sh'),
         sh = 'results.sh',
@@ -301,8 +304,9 @@ rule results:
         # '/scratch/chd5n/herv/results/plots/herv-volcano_A.pdf',
         # '/scratch/chd5n/herv/results/plots/herv-volcano_B.pdf,
         # '/scratch/chd5n/herv/results/plots/herv-volcano_C.pdf,
+        # '/scratch/chd5n/herv/results/plots/herv-counts_A.pdf'
     shell:
         '''
         source {input.cfg}
-        sbatch --output=results_{params.cohort}_v1.out {input.sh} {params.cohort}
+        sbatch --output=results_{params.cohort}_v2.out {input.sh} {params.cohort}
         '''
