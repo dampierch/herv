@@ -2,4 +2,8 @@ logs/
 scripts/*.out
 scripts/.snakemake/
 scripts/__pycache__/
-manuscript/main.{aux,bbl,blg,log,pdf}
+manuscript/main.aux
+manuscript/main.bbl
+manuscript/main.blg
+manuscript/main.log
+manuscript/main.pdf
