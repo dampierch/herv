@@ -1,0 +1,105 @@
+\documentclass[10pt,letterpaper]{article}
+
+    % General document formatting
+    \usepackage[margin=1.5in]{geometry}
+    \usepackage[utf8]{inputenc}
+    \usepackage{authblk}
+    \usepackage{bibentry}
+    \usepackage{parskip}
+
+    \title{Potential Novel Immunotarget Revealed in Mega Analysis of Colorectal Transcriptomes}
+
+    \author[1]{Christopher H. Dampier}
+    \author[2]{David F. Grabski}
+    \author[1]{Matthew Devall}
+    \author[3]{Virginia Diez-Obrero}
+    \author[3]{Ferran Moratalla-Navarro}
+    \author[4]{David Rekosh}
+    \author[4]{Marie-Louise Hammarskjold}
+    \author[5]{Sara K. Rasmussen}
+    \author[3]{Victor Moreno}
+    \author[1]{Graham Casey}
+
+    \affil[1]{Center for Public Health Genomics, University of Virginia, Charlottesville, Virginia, USA}
+    \affil[2]{Department of Surgery, University of Virginia, Charlottesville, Virginia, USA}
+    \affil[3]{Catalan Institute of Oncology, Barcelona, Spain}
+    \affil[4]{Department of Microbiology, Immunology and Cancer Biology, University of Virginia, Charlottesville, Virginia, USA}
+    \affil[5]{Department of Surgery, Seattle Children's, Seattle, Washington, USA}
+
+    \makeatletter
+    \renewcommand{\maketitle}{
+        \begingroup
+            \setlength{\parindent}{0pt}
+            \begin{flushleft}
+                \LARGE\textbf{\@title}
+                \newline
+                \newline
+                \normalsize\@author
+            \end{flushleft}
+        \endgroup
+    }
+    \makeatother
+
+\begin{document}
+
+\maketitle
+
+\section*{Abstract}
+\textbf{Background}: The background goes here.
+
+\textbf{Methods}: The methods go here.
+
+\textbf{Results}: The results go here.
+
+\textbf{Conclusions}: The conclusions go here.
+
+\section*{Introduction}
+
+Colorectal cancer (CRC) is a common malignancy in the United States.
+Early detection and effective treatment result in a 5-year relative survival of 90\% for patients diagnosed with local disease.
+However, over a fifth of new cases are diagnosed with metastatic disease, which has a 5-year relative survival of only 14\% \cite{SEER2020}.
+To improve overall survival of patients with distant disease, new therapeutic approaches are needed.
+
+Immunotherapy in CRC is a promising new treatment option for patients with distant disease.
+Immune checkpoint inhibition was shown to achieve durable responses with programmed cell death protein 1 (PD-1) antibody monotherapy and combination therapy with antibodies for PD-1 and cytotoxic T-lymphocyte-associated
+protein 4 (CTLA-4) \cite{Le2015, Overman2018}.
+However, response to immune checkpoint inhibition was limited to the subset of tumors with mismatch repair defficiency and high microsatellite instability, which constitute approximately 4\% of all metastatic CRC cases \cite{Ganesh2019}.
+Strategies to improve tumor immunogenicity and increase cytotoxic T cell infiltration are required to help extend the benefit of immune therapies to the other 96\% of metastatic CRC.
+Epitopes derived from endogenous retroviral peptides expressed in cancers may offer a solution.
+
+Human endogenous retroviruses (HERVs) are proviral elements integrated into the human genome under conditions that render them incompetent of replication or infection.
+Residual HERV elements in contemporary human genomes are the consequence of retroviral infections of germ cells millions of years ago.
+Since then, and like the rest of the human genome, HERV elements have accumulated point mutations and segmental deletions.
+These alterations in HERV sequences disrupt assembly of functional viral machinery.
+Nevertheless, some HERV sequences can still be transcribed and translated, and a subset are processed as endogenous antigens and presented on major histocompatibility complex (MHC) class I molecules \cite{Boller1997, Rooney2015}.
+In healthy tissues, DNA methylation and histone modification can silence transcription of HERV genes, but epigenetic modifications in the context of oncogenesis can de-repress HERV transcription and lead to translation of neoantigens \cite{Menendez2004, Wiesner2015}.
+
+The cancer specificity of putative HERV peptides makes them promising biomarkers for and targets of immune therapies.
+A major challenge to the development of HERV based therapies is the absence of consensus on how to find HERV gene products.
+Proviruses are generally absent from human gene, transcript, and protein annotations, and their structural features make them hard to identify in agnostic surveys based on DNA or RNA sequencing \cite{ERVmap2018, Treangen2011}.
+Proviral genomes are flanked by repetitive elements that often cannot be mapped with short read sequencing.
+Furthermore, HERVs are transposable elements that have generated many similar proviral integrations throughout the human genome.
+The multitude of similar sequences across the genome impairs accurate high throughout read alignment.
+As a result, the genomic locations and transcriptional abundances of most HERVs are not known with confidence.
+
+Recently, new approaches have been developed to overcome traditional limitations in HERV annotation, quantification, and protein identification \cite{Attig2017, Attig2019, ERVmap2018, Telescope2019}.
+Here, we extend advances in the characterization of HERV transcriptomes to discover novel CRC specific expression patterns.
+We test for differential expression of HERV transcripts in a large cohort of healthy, tumor-adjacent normal, and tumor RNA sequencing data and identify HERV transcripts over expressed in tumor samples.
+We then predict the neoantigens most likely to succeed as biomarkers and immunogenic peptides in the treatment of CRC.
+
+\section*{Methods}
+
+We ...
+
+\section*{Results}
+
+We ...
+
+\section*{Discussion}
+
+We ...
+
+\bibliography{main}
+\bibliographystyle{vancouver}
+
+\end{document}
