@@ -1,6 +1,6 @@
 \documentclass[10pt,letterpaper]{article}
 
-    % General document formatting
+    %% general document formatting
     \usepackage[margin=1.5in]{geometry}
     \usepackage[utf8]{inputenc}
     \usepackage{authblk}
@@ -26,6 +26,9 @@
     \affil[4]{Department of Microbiology, Immunology and Cancer Biology, University of Virginia, Charlottesville, Virginia, USA}
     \affil[5]{Department of Surgery, Seattle Children's, Seattle, Washington, USA}
 
+    %% redefine maketitle function to customize title formatting
+    %https://tex.stackexchange.com/questions/85343/left-align-abstract-title-and-authors
+    %https://en.wikibooks.org/wiki/LaTeX/Fonts#Sizing_text
     \makeatletter
     \renewcommand{\maketitle}{
         \begingroup
