@@ -9,22 +9,23 @@
 
     \title{Potential Novel Immunotarget Revealed in Mega Analysis of Colorectal Transcriptomes}
 
-    \author[1]{Christopher H. Dampier}
-    \author[2]{David F. Grabski}
-    \author[1]{Matthew Devall}
-    \author[3]{Virginia Diez-Obrero}
-    \author[3]{Ferran Moratalla-Navarro}
-    \author[4]{David Rekosh}
-    \author[4]{Marie-Louise Hammarskjold}
-    \author[5]{Sara K. Rasmussen}
-    \author[3]{Victor Moreno}
-    \author[1]{Graham Casey}
+    \author[1]{Christopher H. Dampier, MD}
+    \author[2]{David F. Grabski, MD, PhD}
+    \author[1]{Matthew Devall, PhD}
+    \author[3]{Virginia Diez-Obrero, BS}
+    \author[3]{Ferran Moratalla-Navarro, MS}
+    \author[4]{David Rekosh, PhD}
+    \author[4]{Marie-Louise Hammarskjold, PhD}
+    \author[5]{Sara K. Rasmussen, MD, PhD}
+    \author[3]{Victor Moreno, MD, PhD}
+    \author[1,*]{Graham Casey, PhD}
 
     \affil[1]{Center for Public Health Genomics, University of Virginia, Charlottesville, Virginia, USA}
     \affil[2]{Department of Surgery, University of Virginia, Charlottesville, Virginia, USA}
     \affil[3]{Catalan Institute of Oncology, Barcelona, Spain}
     \affil[4]{Department of Microbiology, Immunology and Cancer Biology, University of Virginia, Charlottesville, Virginia, USA}
     \affil[5]{Department of Surgery, Seattle Children's, Seattle, Washington, USA}
+    \affil[*]{Correspondence: Graham Casey, PhD, Center for Public Health Genomics, MSB Room 3238, Department of Public Health Sciences, University of Virginia, P.O. Box 800717, Charlottesville, VA 22908-0717, gc8r@virginia.edu}
 
     %% redefine maketitle function to customize title formatting
     %https://tex.stackexchange.com/questions/85343/left-align-abstract-title-and-authors
@@ -47,6 +48,11 @@
 
 \maketitle
 
+\newpage
+\section*{Synopsis}
+1 to 3 sentences, no more than 45 words
+
+\newpage
 \section*{Abstract}
 \textbf{Background}:
 Microsatellite unstable, mismatch repair deficient metastatic cancers can be treated with immune checkpoint inhibitors, but new therapeutic approaches are needed to extend the benefits of immune modulators to the majority of patients with microsatellite stable tumors.
@@ -55,19 +61,19 @@ To identify novel targets for immune mediated cancer therapies, we tested for ca
 
 \textbf{Methods}:
 A recently curated RNA sequencing dataset composed of 1,139 human primary colorectal tissue samples divided into three cohorts was re-processed using a novel annotation of repeat element transcripts to quantify levels of repeat element expression in colorectal transcriptomes.
-A total of ### healthy, ### tumor-adjacent normal, and ### tumor samples were profiled with short read sequencing.
+A total of NUMBER healthy, NUMBER tumor-adjacent normal, and NUMBER tumor samples were profiled with short read sequencing.
 Transcripts were quantified with Salmon using the GENCODE v36 transcriptome augmented to include unannotated exons from long terminal repeat elements classified as human endogenous retroviruses (HERVs) in the Dfam database.
 Associations between transcript expression and tissue phenotype were tested using DESeq2 in the R statistical language.
 
 \textbf{Results}:
-Out of 5,025 unannotated HERV genes measured in 834 samples, including ### healthy, ### tumor-adjacent normal, and ### tumor samples, 150 were expressed within one standard deviation of median protein coding gene expression in at least one tissue phenotype.
+Out of 5,025 unannotated HERV genes measured in 834 samples, including NUMBER healthy, NUMBER tumor-adjacent normal, and NUMBER tumor samples, 150 were expressed within one standard deviation of median protein coding gene expression in at least one tissue phenotype.
 Over half of the 150 HERV genes with moderate expression were in the H (26) or K (51) classes.
 Tumor specific over expression was observed in 11 of the 150 HERV genes tested.
 
 \textbf{Conclusions}: The conclusions go here.
 
+\newpage
 \section*{Introduction}
-
 Colorectal cancer (CRC) is a common malignancy in the United States.
 Early detection and effective treatment result in a 5-year relative survival of 90\% for patients diagnosed with local disease.
 However, over a fifth of new cases are diagnosed with metastatic disease, which has a 5-year relative survival of only 14\% \cite{SEER2020}.
@@ -101,18 +107,101 @@ We test for differential expression of HERV transcripts in a large cohort of hea
 We then predict the neoantigens most likely to succeed as biomarkers and immunogenic peptides in the treatment of CRC.
 
 \section*{Methods}
+\subsection*{Sample Selection}
+Bulk RNA sequencing (RNA-seq) data from a recently curated set of 1,139 flash frozen colorectal tissue samples were re-processed and analyzed for the presence of HERV genes \cite{Dampier2020}.
+For discovery of associations between tissue phenotypes and HERV expression, paired end sequencing from 834 colon biopsies (Cohort A) was used.
+Of those biopsies, 462 were healthy tissue, 61 were tumor adjacent normal tissue, and 311 were tumors.
+For validation of discovered associations, two independent cohorts were used.
+The first (Cohort B) included paired end sequencing from 30 pairs of tumor and matched adjacent normal biopsies (i.e. 15 samples of both tissue phenotypes paired by subject).
+The second (Cohort C) included single end sequencing from 275 colon biopsies of which NUMBER were healthy, NUMBER were tumor adjacent, and NUMBER were tumor.
+An important characteristic of the discovery cohort (Cohort A) and the second of the two validation cohorts (Cohort C) was the independence of all tumor and tumor adjacent samples.
+To permit valid inference from regular linear models, only one tissue phenotype was used per subject.
 
-We ...
+Samples were gathered from publicly available RNA-seq datasets hosted on the Genomic Data Commons and Sequence Read Archive as well as from a novel cohort of healthy mucosal biopsies obtained during screening colonoscopies at the Catalan Institute of Oncology in Barcelona, Spain \cite{Dampier2020, Diez-Obrero2020}.
+A complete description of sample selection and cohort construction for the curated dataset is available in Dampier et al \cite{Dampier2020}.
+RNA-seq reads for all samples were stored and analyzed in FASTQ format.
+For samples downloaded in BAM format, Biobambam2 v2.0.87 \cite{Tischler2014} was used to convert reads to FASTQ format.
+
+\subsection*{Human Endogenous Retrovirus Gene Annotation}
+HERVs were identified using the genomic coordinates (GRCh38) and feature names of exons and spliced transcripts of HERV elements from a recently published human cancer transcriptome annotated with the GENCODE v24 basic gene model \cite{Frankish2018} and a model of genome-wide repeat elements \cite{Attig2019}.
+The cancer transcriptome was assembled from RNA-seq reads of 24 subjects from each of 32 cancer types obtained from The Cancer Genome Atlas (TCGA), as previously described \cite{Attig2019}.
+Names and coordinates of repeat elements were generated using RepeatMasker \cite{Smit2015} configured with nhmmer \cite{Wheeler2013} in sensitive mode using the Dfam 2.0 library (v150923) \cite{Hubley2015}, as previously described \cite{Attig2017}.
+The method relies on profile hidden Markov models representing known human repeat families to classify repeat elements throughout the genome.
+
+Previously unannotated HERV genes were selected for the current study in multiple steps.
+A complete gene transfer format (GTF) \cite{GTF} annotation of the repeat element inclusive cancer transcriptome was downloaded from Attig et al. \cite{Attig2019}.
+The annotation was parsed with a custom Python script to produce a new annotation in BED12 \cite{BED12} format.
+Transcripts were selected based on three criteria: i) overlap of at least one exon with a long terminal repeat element, ii) classification of at least one exon as HERV derived, and iii) abscence of any exon overlapping an annotated GENCODE gene.
+All transcripts labeled with the same repeat element identifier (i.e. repeat element class along with genomic coordinates) were considered isoforms of the same HERV gene.
+Genomic coordinates were extracted for all constituent exons of selected transcripts to permit inference of splice sites and exclusion of intronic sequences.
+For display purposes, repeat element identifier genomic coordinates were converted to cytobands.
+
+\subsection*{Transcript Quantification}
+Transcript quantification was performed with Salmon v1.2.1 \cite{Patro2017} in mapping-based mode with the \verb|--gcBias| and \verb|--validateMappings| flags set.
+Inputs to the Salmon \verb|quant| command were RNA-seq reads in FASTQ format and the Salmon index.
+To create the Salmon index, a custom reference transcriptome was built from a list of GENCODE v34  transcript sequences \cite{Frankish2018} and the list of unannotated HERV transcript sequences.
+GENCODE sequences were downloaded from the GENCODE FTP site \cite{GENCODE-transcripts}.
+HERV sequences were extracted from the GRCh38 reference genome \cite{ENCODE-GRCh38} using the BEDTools \cite{Quinlan2010} \verb|getfasta| command with the \verb|-split| option and the custom BED12 annotation of selected HERV transcripts.
+Following the recommendation of Salmon's authors \cite{SalmonDecoys}, contig sequences from the GRCh38 reference genome were subsequently added to the target transcript sequences as decoy sequences to generate a decoy-aware transcriptome for indexing.
+
+\subsection*{Gene Expression Analysis}
+Associations between HERV gene expression and tissue phenotype were tested using the \emph{Bioconductor} suite of genomics analysis packages \cite{bioc} in the R statistical programming language \cite{R}.
+Specifically, \emph{tximport} \cite{Soneson2015} was used to extract transcript length and abundance estimates from Salmon and summarize them to the gene level for input into \emph{DESeq2} \cite{Love2014}.
+Count matrices of HERV and GENCODE genes were prefiltered to select genes with a count of at least one read in at least half of the samples in each cohort.
+Factors to normalize counts for sequencing depth and transcript length were calculated with \emph{DESeq2}.
+Latent factors of non-biological variation were estimated with \emph{sva} \cite{sva}.
+Genes of interest for association testing were selected in several steps.
+
+First, counts of all genes were transformed with the variance stabilizing transformation of \emph{DESeq2} and adjusted for batch effects with \emph{limma} \cite{Ritchie2015}.
+Second, adjusted counts of all annotated genes were filtered to retain only protein coding genes.
+Third, median and standard deviation of protein coding gene expression were calculated separately for each tissue phenotype in each cohort.
+Finally, adjusted counts of HERV genes were filtered to retain only HERVs expressed within a single standard deviation of median protein coding gene expression in at least one tissue phenotype.
+
+Counts of all protein coding genes and HERVs with sufficient expression were modeled with phenotype and latent factors as explanatory variables using \emph{DESeq2}.
+Significant associations between gene count and tissue phenotype were identified by testing whether the absolute value of the effect of phenotype was at least two fold change for a given gene.
+Multiple hypothesis testing correction was performed using a false discovery rate of 5\%.
 
 \section*{Results}
 
+Tumor specific overexpression ... antigenic potential
+cohort A
+then cohorts B and C
+then cohort A without Attig TCGA 48 + 18 (24 COAD tumor, 24 READ tumor, 12 COAD NAT, 6 READ NAT) and GTEx 12
+then MSI vs MSS
+then tumors with most HERV overexpression
+then immunogenic peptide prediction
+
 We ...
+Of 1,001,931 transcripts composed of 3,987,323 exons 16,336 transcripts ... 35,666 exons
+
+Healthy overexpression ... functional role
+cohort A
+then cohorts B and C
+then Grabski method
 
 \section*{Discussion}
 
-We ...
+HERVs could be used as immune targets or biomarkers
+HERVs may play a role in maintaining healthy epithelium
+Limitations
+Conclusion
+
+\section*{Acknowledgements}
+
+People we want to thank. Grant support.
 
 \bibliography{main}
 \bibliographystyle{vancouver}
 
+\section*{Figure Legends}
+
+Legs
+
+\section*{Tables}
+
+Tabs
+
 \end{document}
+
+problems with AMA style file...
+https://tex.stackexchange.com/questions/55020/updated-ama-bst-file
