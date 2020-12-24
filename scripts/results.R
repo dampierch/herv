@@ -782,3 +782,20 @@ main()
 
 # target <- "/scratch/chd5n/test-fig.pdf"
 # ggsave(target, p, device="pdf", width=15, height=4, units="in")
+
+restabs <- load_res_tables("herv")
+y <- list()
+y[[1]] <- -log10(restabs[[1]]$pvalue)
+y[[2]] <- -log10(restabs[[2]]$pvalue)
+y[[3]] <- -log10(restabs[[3]]$pvalue)
+x <- -log10(qunif(ppoints(length(y[[1]]))))
+
+xlab <- expression("Expected -log"["10"]*"("*italic("p")*")")
+ylab <- expression("Observed -log"["10"]*"("*italic("p")*")")
+
+pdf("/scratch/chd5n/herv/results/plots/herv-qq_A.pdf", height=3, width=9)
+par(mfrow=c(1,3))
+qqplot(x, y[[1]], xlab=xlab, ylab=ylab, main="NATvHLT", col="blue")
+qqplot(x, y[[3]], xlab=xlab, ylab=ylab, main="TUMvNAT", col="blue")
+qqplot(x, y[[2]], xlab=xlab, ylab=ylab, main="TUMvHLT", col="blue")
+dev.off()
