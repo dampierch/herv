@@ -120,17 +120,19 @@ We then predict the neoantigens most likely to succeed as biomarkers and immunog
 
 \section*{Methods}
 \subsection*{Sample Selection}
-Bulk RNA sequencing (RNA-seq) data from a recently curated set of 1,139 flash frozen colorectal tissue samples were re-processed and analyzed for the presence of HERV genes \citep{Dampier2020}.
-For discovery of associations between tissue phenotypes and HERV expression, paired end sequencing from 834 colon biopsies (Cohort A) was used.
+Bulk RNA sequencing (RNA-seq) from a recently curated set of 1,139 flash frozen colorectal tissue samples was re-processed and analyzed for the presence of unannotated HERV genes \citep{Dampier2020}.
+For discovery of associations between tissue phenotypes and HERV expression, paired end sequencing from 834 colon biopsies was used.
 Of those biopsies, 462 were healthy tissue, 61 were tumor adjacent normal tissue, and 311 were tumors.
+These samples are referred to as the discovery cohort.
+
 For validation of discovered associations, two independent cohorts were used.
-The first (Cohort B) included paired end sequencing from 30 pairs of tumor and matched adjacent normal biopsies (i.e. 15 samples of both tissue phenotypes paired by subject).
-The second (Cohort C) included single end sequencing from 275 colon biopsies of which NUMBER were healthy, NUMBER were tumor adjacent, and NUMBER were tumor.
-An important characteristic of the discovery cohort (Cohort A) and the second of the two validation cohorts (Cohort C) was the independence of all tumor and tumor adjacent samples.
+The first (validation \#1) included paired end sequencing from 30 pairs of tumor and matched adjacent normal biopsies (i.e. 15 samples of both tissue phenotypes paired by subject).
+The second (validation \#2) included single end sequencing from 275 colon biopsies of which NUMBER were healthy, NUMBER were tumor adjacent, and NUMBER were tumor.
+An important characteristic of the discovery cohort and the validation \#2 cohort was the independence of all tumor and tumor adjacent samples.
 To permit valid inference from regular linear models, only one tissue phenotype was used per subject.
 
-Samples were gathered from publicly available RNA-seq datasets hosted on the Genomic Data Commons and Sequence Read Archive as well as from a novel cohort of healthy mucosal biopsies obtained during screening colonoscopies at the Catalan Institute of Oncology in Barcelona, Spain \citep{Dampier2020, DiezObrero2020}.
-A complete description of sample selection and cohort construction for the curated dataset is available in Dampier et al \citep{Dampier2020}.
+Samples were gathered from publicly available RNA-seq datasets hosted on the Genomic Data Commons and Sequence Read Archive as well as from a recently generated dataset of healthy mucosal biopsies obtained during screening colonoscopies at the Catalan Institute of Oncology in Barcelona, Spain \citep{Dampier2020, DiezObrero2020}.
+A complete description of sample selection and cohort construction for the curated dataset is available in Dampier et al. \citep{Dampier2020}.
 RNA-seq reads for all samples were stored and analyzed in FASTQ format.
 For samples downloaded in BAM format, Biobambam2 v2.0.87 \citep{Tischler2014} was used to convert reads to FASTQ format.
 
@@ -174,11 +176,17 @@ Significant associations between gene count and tissue phenotype were identified
 Multiple hypothesis testing correction was performed using a false discovery rate of 5\%.
 
 \section*{Results}
-\subsection*{Tumor Specific Over-expression}
-To overcome the difficulty of defining the precise location of HERV sequences in the human genome, we used as a starting point a recently published, de novo assembled, HERV-aware annotation of the human cancer transcriptome \citep{Attig2019}.
-The complete annotation included over 1 million transcripts, including previously unannotated repeat sequences.
-To discover patterns of novel, cancer-specific HERV expression, we identified the subset of transcripts that were HERV-derived and without annotated exons, as detailed in the Methods.
-There were 16,336 transcripts generated from 5,025 HERV genes in the reference transcriptome of Attig et al. (Figure \ref{fig:ele_sum}A).
+\subsection*{Over-Expression of Novel HERV Genes in Tumors}
+To define an inclusive set of non-canonical HERV elements against which to compare CRC transcripts, we started with a recently published model of the human cancer transcriptome assembled \emph{de novo} from TCGA samples and annotated with \emph{RepeatMasker} using the Dfam database \citep{Attig2019}.
+The complete annotation included over 1 million transcripts, 416,862 of which overlapped long terminal repeat sequences (i.e. the repeat sequences that flank HERV genes).
+To discover novel, cancer-specific HERV expression, we identified a subset of transcripts composed of exons without GENCODE annotations, at least one of which was classifed as a HERV element.
+There were 16,336 transcripts composed of 35,666 exons from 5,025 genes that met our criteria (Figure \ref{fig:ele_sum}A).
+To estimate gene abundance, RNA-seq reads from a discovery cohort of 834 colorectal samples were quasi-mapped to a transcriptome composed of GENCODE reference transcripts combined with the 16,336 unannotated HERV transcripts using Salmon.
+A total of 150 unannotated HERV genes were expressed at levels within a standard deviation of canonical protein coding genes.
+Approximately half were from classes K and H, two of the better characterized classes of HERV (Figure \ref{fig:ele_sum}B).
+
+To identify HERV genes that could encode tumor specific neoantigens, we compared expression levels in tumor samples to levels in healthy samples and histologically normal tumor adjacent samples.
+
 
 
 
@@ -194,8 +202,7 @@ then MSI vs MSS
 then tumors with most HERV overexpression
 then immunogenic peptide prediction
 
-We ...
-Of 1,001,931 transcripts composed of 3,987,323 exons 16,336 transcripts ... 35,666 exons
+\subsection*{HERV Genes in Healthy Tissue}
 
 Healthy overexpression ... functional role
 cohort A
