@@ -49,10 +49,10 @@
 %% \renewcommand\@biblabel[1]{#1} % from [1] to 1
 %% \makeatother %
 %%
-%%
 %% format.names FUNCTION modified by Chris Dampier to list only three authors
 %% when more than six authors are included in a single citation
 %% see lines 725-823
+%% see https://tex.stackexchange.com/questions/157045/ for resources
 %%---------------------------------------------------------------------
 
 %% List of all possible fields
