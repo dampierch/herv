@@ -29,7 +29,6 @@ library(ggplot2)
 library(cowplot)
 library(reshape2)
 library(dplyr)
-library(bacon)
 
 
 args <- commandArgs(trailingOnly=TRUE)
