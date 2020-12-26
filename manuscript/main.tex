@@ -181,7 +181,7 @@ To define an inclusive set of non-canonical HERV elements against which to compa
 The complete annotation included over 1 million transcripts, 416,862 of which overlapped long terminal repeat sequences (i.e. the repeat sequences that flank HERV genes).
 We aimed to discover expression of novel, cancer-specific HERV sequences, so we selected a subset of transcripts composed of exons without GENCODE annotations, at least one of which was classifed as a HERV element.
 There were 16,336 transcripts composed of 35,666 exons from 5,025 genes that met our criteria (Figure \ref{fig:ele_sum}A).
-To estimate gene abundance in colorectal transciptomes, RNA-seq reads from a discovery cohort of 834 colorectal samples were quasi-mapped to a transcriptome composed of GENCODE reference transcripts combined with the 16,336 unannotated HERV transcripts using Salmon.
+To estimate gene abundance in colorectal transciptomes, RNA-seq reads from a discovery cohort of 834 colorectal samples (\textbf{Supplementary Table 1}) were quasi-mapped to a transcriptome composed of GENCODE reference transcripts combined with the 16,336 unannotated HERV transcripts using Salmon.
 A total of 150 unannotated HERV genes were expressed at levels within a standard deviation of canonical protein coding genes.
 Approximately half were from classes K and H, two of the better characterized classes of HERV (Figure \ref{fig:ele_sum}B).
 
@@ -192,18 +192,72 @@ Out of 150 HERV genes tested, 28 were over-expressed in tumor samples relative t
 We intersected these two lists to identify 11 HERV genes over-expressed in tumors relative to both healthy and tumor adjacent samples (Figure \ref{fig:main_find}C).
 These 11 HERV genes could serve as tumor biomarkers and may also encode proteins unknown to the adaptive immune system that could serve as targets for immune therapy with lower likelihood of off target effects.
 
-To confirm the significance of the 11 HERV genes, we sought multiple validations of our methods and results. First, we verified the consistency of HERV vs field effect.
-Validations...
+To confirm the significance of the 11 HERV genes, we sought multiple validations of our methods and results.
+First, we verified the consistency of relative protein coding gene expression between tissue phenotypes in the present study and a prior study of the same samples.
+For the comparisons between tumor samples and healthy and tumor adjacent samples, the Pearson correlations coefficients were 0.95 and 0.97, respectively (\textbf{Supplementary Figure 1}).
+The high concordance of effect sizes between this study and the prior, which employed similar methods to estimate gene abundance but did not consider HERV transcripts, indicated expansion of the reference transcriptome to include unannotated HERV sequences did not compromise estimates of relative abundance.
+
+Next, we
+
+validation #1
+validation #2
+
+
+restabs <- list()
+for (cohort in c("A", "B", "C")) {
+    restabs[[cohort]] <- load_res_tables("herv", scope="hrv")
+}
+
+idx <- lapply(restabs, fun <- function(x1) {
+    idx1 <- lapply(x1, fun <- function(x2) {
+        a <- x2$padj < 0.05
+        b <- x2$log2FoldChange > 0
+        c <- a & b
+        return(c)
+    })
+    return(idx1)
+})
+
+l <- list()
+for (n1 in names(restabs)) {
+    l[[n1]] <- list()
+    for (n2 in names(restabs[[n1]])) {
+        l[[n1]][[n2]] <- restabs[[n1]][[n2]][idx, "gene_id"]
+    }
+}
+
+l <- lapply(restabs, fun <- function(x) {
+    for (i in seq_len(length(x))) {
+        x[[i]]
+    }
+})
+
+
+tophervs <- restabs[["TUMvHLT"]][idx, "gene_id"]
+
+
+cohort <- "A"
+restabsA <- load_res_tables("herv", scope="hrv")
+cohort <- "B"
+restabsB <- load_res_tables("herv", scope="hrv")
+cohort <- "C"
+restabsC <- load_res_tables("herv", scope="hrv")
+
+idxA <- lapply(restabsA, fun <- function(x) {
+    a <- x$padj < 0.05
+    b <- x$log2FoldChange > 0
+    c <- a & b
+    return(c)
+})
+
+conds[[1]] <- restabs[["NATvHLT"]]$padj < 0.05
+conds[[2]] <- restabs[["NATvHLT"]]$log2FoldChange > 0
 
 
 
-
-We test for differential expression of HERV transcripts in a large cohort of healthy, tumor-adjacent normal, and tumor RNA sequencing data and identify HERV transcripts over expressed in tumor samples.
 We then predict the neoantigens most likely to succeed as biomarkers and immunogenic peptides in the treatment of CRC.
 
 
-Tumor specific overexpression ... antigenic potential
-cohort A
 then cohorts B and C
 then cohort A without Attig TCGA 48 + 18 (24 COAD tumor, 24 READ tumor, 12 COAD NAT, 6 READ NAT) and GTEx 12
 then MSI vs MSS
