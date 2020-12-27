@@ -49,7 +49,7 @@ load_inputs <- function(target1, target2, target3) {
 create_dds <- function(l) {
     ## create DESeq2 data set with txi and dataframe
     ## pre-filter genes prior to normalization
-    ## get size-factors and normalized counts
+    ## get normalizationFactors for normalized counts
     cat("Creating pre-filtered dds\n")
     if (cohort != "B") {
         dds <- DESeqDataSetFromTximport(l$txi, l$colData, ~ phenotype)
@@ -60,7 +60,7 @@ create_dds <- function(l) {
     sample_lim <- 1/2 * ncol(dds)
     keep <- rowSums( counts(dds) > count_lim ) >= sample_lim
     dds <- dds[keep, ]
-    dds <- DESeq(dds)
+    dds <- estimateSizeFactors(dds)
     return(dds)
 }
 
@@ -221,6 +221,14 @@ check_dir <- function(dir) {
 }
 
 
+write_adj <- function(adj, target) {
+    ## save adjusted counts
+    cat("Writing adjusted counts to file\n")
+    save(adj, file=target)
+    cat("adj written to", target, "\n")
+}
+
+
 write_dge <- function(dgeobj, target) {
     cat("Writing dgeobj to file\n")
     save(dgeobj, file=target)
@@ -270,6 +278,9 @@ main <- function() {
         dds <- run_sva(svaobj, dds)
     }
     adj <- count_adjustment(dds)
+    target <- paste0(Sys.getenv("rdata_dir"), "adj_", cohort, ".Rda")
+    check_dir(Sys.getenv("rdata_dir"))
+    write_adj(adj, target)
     dds <- filter_genes(dds, adj, inputs$hervs)
     dgeobj <- test_dge(dds, adj)
     target <- paste0(Sys.getenv("rdata_dir"), "dge_", cohort, ".Rda")

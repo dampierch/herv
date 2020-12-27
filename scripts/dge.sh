@@ -12,7 +12,7 @@
 
 ## -- requires config.sh to set environmental variables
 ## -- for use in snakemake workflow
-## -- usage: snakemake setup_dge
+## -- usage: snakemake dge
 
 ## -- perform: 0.5h, 10GB for cohort A
 

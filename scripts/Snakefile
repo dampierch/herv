@@ -275,6 +275,7 @@ rule dge:
         # cohort = 'B'
         # cohort = 'C'
     output:
+        ## adj = '/scratch/chd5n/herv/rdata/adj_A.Rda'
         ## dge = '/scratch/chd5n/herv/rdata/dge_A.Rda'
         ## dge = '/scratch/chd5n/herv/rdata/dge_B.Rda'
         ## dge = '/scratch/chd5n/herv/rdata/dge_C.Rda'
@@ -283,7 +284,7 @@ rule dge:
     shell:
         '''
         source {input.cfg}
-        sbatch --output=dge_{params.cohort}.out {input.sh} {params.cohort}
+        sbatch --output=dge_{params.cohort}_v2.out {input.sh} {params.cohort}
         '''
 
 rule results:
@@ -302,8 +303,8 @@ rule results:
         R = 'results.R'
     params:
         cohort = 'A',
-        # cohort = 'B'
-        # cohort = 'C'
+        # cohort = 'B',
+        # cohort = 'C',
         validate = 1
     output:
         # '/scratch/chd5n/herv/results/plots/herv-field-cor_A.pdf',
