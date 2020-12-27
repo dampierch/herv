@@ -1,34 +1,6 @@
 ## to be sourced in results.R
 
 
-parse_band <- function(e, cytomap) {
-    ## used within map_cytoband()
-    cond1 <- cytomap$chrom == e["chrom"]
-    cond2 <- cytomap$start <= as.numeric(e["start"])
-    cond3 <- cytomap$stop >= as.numeric(e["start"])
-    idx <- cond1 & cond2 & cond3
-    return(paste(
-        e["hrvnm_l"],
-        paste0(strsplit(e["chrom"], "chr")[[1]][2], cytomap[idx, "band"])
-    ))
-}
-
-
-map_cytoband <- function(tophervs) {
-    target <- paste0(Sys.getenv("ref_dir"), "annotation/ucsc/",
-        "cytoBand.txt.gz"
-    )
-    con <- gzfile(target, "rb")
-    cytomap <- readr::read_tsv(con,
-        col_names=c("chrom", "start", "stop", "band", "giemsa")
-    )
-    close(con)
-    l <- setNames(base::lapply(strsplit(tophervs, "[|]"), unpack_id), tophervs)
-    tophervs2 <- base::lapply(l, parse_band, cytomap)
-    return(tophervs2)
-}
-
-
 select_tophervs <- function(model="naive") {
     ## model indicates underlying assumption about gene expression in NAT vs HLT
     ## field or naive; field assumes NAT is intermediate between HLT and TUM;

@@ -29,11 +29,14 @@ library(ggplot2)
 library(cowplot)
 library(reshape2)
 library(dplyr)
+library(xtable)
 
 
 args <- commandArgs(trailingOnly=TRUE)
 cohort <- args[2]
+validate <- as.numeric(args[3])
 cat(paste("Cohort:", cohort, "\n"))
+cat(paste("Validate:", validate, "\n"))
 
 
 source("res_utilities.R")
@@ -42,6 +45,8 @@ source("res_corr.R")
 source("res_hervsum.R")
 source("res_volcano.R")
 source("res_topherv.R")
+source("res_infla.R")
+source("res_val.R")
 
 
 correlation_analysis <- function() {
@@ -109,16 +114,44 @@ main <- function() {
 }
 
 
-main()
+inflation_tests <- function() {
+    tab_herv <- load_res_tables("herv")
+
+    target_dir <- Sys.getenv("plot_dir")
+    check_dir(target_dir)
+    target <- paste0(target_dir, "herv-qq_", cohort, ".pdf")
+    simple_qq(tab_herv, target)
+
+    target_dir <- Sys.getenv("plot_dir")
+    check_dir(target_dir)
+    target <- paste0(target_dir, "herv-qq2_", cohort, ".pdf")
+    bacon_qq(tab_herv, target=target)
+}
 
 
+validation_tests <- function() {
+    restabs <- fill_restabs()
+
+    pl <- val_corr_analysis(restabs)
+    target_dir <- Sys.getenv("plot_dir")
+    check_dir(target_dir)
+    target <- paste0(target_dir, "herv-val-cor.pdf")
+    write_cor_val(pl, target)
+
+    l <- extract_main_hervs(restabs)
+    valdf <- build_val_df(restabs, l)
+    target_dir <- Sys.getenv("table_dir")
+    check_dir(target_dir)
+    target <- paste0(target_dir, "herv-val-table.tex")
+    write_valtable(valdf, target)
+    l2 <- stringent_val(l)
+    return(l2)
+}
 
 
-# target <- "/scratch/chd5n/test-fig.pdf"
-# ggsave(target, p, device="pdf", width=15, height=4, units="in")
-
-tab_herv <- load_res_tables("herv")
-target_dir <- Sys.getenv("plot_dir")
-check_dir(target_dir)
-target <- paste0(target_dir, "herv-qq_", cohort, ".pdf")
-simple_qq(tab_herv, target)
+if (validate == 1) {
+    l2 <- validation_tests()
+    print(l2)
+} else {
+    main()
+}

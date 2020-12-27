@@ -289,15 +289,22 @@ rule dge:
 rule results:
     '''
     wget --timestamping "ftp://hgdownload.cse.ucsc.edu/goldenPath/hg38/database/cytoBand.txt.gz" -O /scratch/chd5n/reference-genome/annotation/ucsc/cytoBand.txt.gz
+
+    note: cohort choices are A, B, and C per field effect study, but in herv
+    study the cohorts are referred to as discovery, ind #2, and ind #1,
+    respectively
+
+    note: validate is an integer boolean; 0 = FALSE, 1 = TRUE
     '''
     input:
         cfg = ancient('config.sh'),
         sh = 'results.sh',
         R = 'results.R'
     params:
-        cohort = 'A'
+        cohort = 'A',
         # cohort = 'B'
         # cohort = 'C'
+        validate = 1
     output:
         # '/scratch/chd5n/herv/results/plots/herv-field-cor_A.pdf',
         # '/scratch/chd5n/herv/results/plots/herv-element-sum_A.pdf',
@@ -305,8 +312,12 @@ rule results:
         # '/scratch/chd5n/herv/results/plots/herv-volcano_B.pdf,
         # '/scratch/chd5n/herv/results/plots/herv-volcano_C.pdf,
         # '/scratch/chd5n/herv/results/plots/herv-counts_A.pdf'
+        # '/scratch/chd5n/herv/results/plots/herv-val-cor_A.pdf'
     shell:
         '''
         source {input.cfg}
-        sbatch --output=results_{params.cohort}_v2.out {input.sh} {params.cohort}
+        sbatch --output=results_{params.cohort}_v2.{params.validate}.out \
+            {input.sh} \
+            {params.cohort} \
+            {params.validate}
         '''

@@ -12,9 +12,9 @@
 
 ## -- requires config.sh to set environmental variables
 ## -- for use in snakemake workflow
-## -- usage: snakemake setup_dge
+## -- usage: snakemake results
 
-## -- perform: 1.5m, 2.5GB for cohort A
+## -- perform: 1-2m, 3.4GB for cohort A
 
 
 script_name=results.sh
@@ -22,6 +22,7 @@ script_name=results.sh
 
 ## command-line arguments
 cohort=$1
+validate=$2
 
 
 startup_report () {
@@ -30,6 +31,7 @@ startup_report () {
   echo Starting $script_name ...
   echo
   echo Cohort: $cohort
+  echo Validation: $validate
   echo
 }
 
@@ -56,7 +58,7 @@ shutdown_report () {
 
 run_module () {
   echo Running R script ...
-  Rscript ${script_name%.sh}.R --args $cohort
+  Rscript ${script_name%.sh}.R --args $cohort $validate
 }
 
 

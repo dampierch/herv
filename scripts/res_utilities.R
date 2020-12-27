@@ -31,22 +31,27 @@ set_paths <- function(in_path, in_name) {
 }
 
 
-load_res_tables <- function(study, scope="all") {
+load_res_tables <- function(study, scope="all", set_cohort=NULL) {
     ## scope can be "all" or "hrv"
     ## order genes by gene_id instead of rank so that order is consistent across
     ## different results tables to facilitate comparisons across tables
     cat("Loading results tables\n")
+    if (is.null(set_cohort)) {
+        cohort_choice <- cohort
+    } else {
+        cohort_choice <- set_cohort
+    }
     if (study == "herv") {
         in_path <- Sys.getenv("table_dir")
-        if (cohort == "B") {
+        if (cohort_choice == "B") {
             in_name <- c(
                 paste0("res_B_CRCvNAT_", scope, ".tsv")
             )
         } else {
             in_name <- c(
-                paste0("res_", cohort, "_NATvHLT_", scope, ".tsv"),
-                paste0("res_", cohort, "_CRCvHLT_", scope, ".tsv"),
-                paste0("res_", cohort, "_CRCvNAT_", scope, ".tsv")
+                paste0("res_", cohort_choice, "_NATvHLT_", scope, ".tsv"),
+                paste0("res_", cohort_choice, "_CRCvHLT_", scope, ".tsv"),
+                paste0("res_", cohort_choice, "_CRCvNAT_", scope, ".tsv")
             )
         }
     } else {
@@ -97,4 +102,32 @@ unpack_id <- function(e) {
     return(setNames(c(hvnm_s, hvnm_l, chrom, start, stop),
         c("hrvnm_s", "hrvnm_l", "chrom", "start", "stop"))
     )
+}
+
+
+parse_band <- function(e, cytomap) {
+    ## used within map_cytoband()
+    cond1 <- cytomap$chrom == e["chrom"]
+    cond2 <- cytomap$start <= as.numeric(e["start"])
+    cond3 <- cytomap$stop >= as.numeric(e["start"])
+    idx <- cond1 & cond2 & cond3
+    return(paste(
+        e["hrvnm_l"],
+        paste0(strsplit(e["chrom"], "chr")[[1]][2], cytomap[idx, "band"])
+    ))
+}
+
+
+map_cytoband <- function(hervlist) {
+    target <- paste0(Sys.getenv("ref_dir"), "annotation/ucsc/",
+        "cytoBand.txt.gz"
+    )
+    con <- gzfile(target, "rb")
+    cytomap <- readr::read_tsv(con,
+        col_names=c("chrom", "start", "stop", "band", "giemsa")
+    )
+    close(con)
+    l <- setNames(base::lapply(strsplit(hervlist, "[|]"), unpack_id), hervlist)
+    hervlist2 <- base::lapply(l, parse_band, cytomap)
+    return(hervlist2)
 }

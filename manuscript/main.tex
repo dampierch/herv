@@ -126,9 +126,9 @@ Of those biopsies, 462 were healthy tissue, 61 were tumor adjacent normal tissue
 These samples are referred to as the discovery cohort.
 
 For validation of discovered associations, two independent cohorts were used.
-The first (validation \#1) included paired end sequencing from 30 pairs of tumor and matched adjacent normal biopsies (i.e. 15 samples of both tissue phenotypes paired by subject).
-The second (validation \#2) included single end sequencing from 275 colon biopsies of which NUMBER were healthy, NUMBER were tumor adjacent, and NUMBER were tumor.
-An important characteristic of the discovery cohort and the validation \#2 cohort was the independence of all tumor and tumor adjacent samples.
+The first (independent cohort \#1) included single end sequencing from 275 colon biopsies of which NUMBER were healthy, NUMBER were tumor adjacent, and NUMBER were tumor.
+The second (independent cohort \#2) included paired end sequencing from 30 pairs of tumor and matched adjacent normal biopsies (i.e. 15 samples of both tissue phenotypes paired by subject).
+An important characteristic of the discovery cohort and independent cohort \#1 was the independence of all tumor and tumor adjacent samples.
 To permit valid inference from regular linear models, only one tissue phenotype was used per subject.
 
 Samples were gathered from publicly available RNA-seq datasets hosted on the Genomic Data Commons and Sequence Read Archive as well as from a recently generated dataset of healthy mucosal biopsies obtained during screening colonoscopies at the Catalan Institute of Oncology in Barcelona, Spain \citep{Dampier2020, DiezObrero2020}.
@@ -201,58 +201,6 @@ Next, we
 
 validation #1
 validation #2
-
-
-restabs <- list()
-for (cohort in c("A", "B", "C")) {
-    restabs[[cohort]] <- load_res_tables("herv", scope="hrv")
-}
-
-idx <- lapply(restabs, fun <- function(x1) {
-    idx1 <- lapply(x1, fun <- function(x2) {
-        a <- x2$padj < 0.05
-        b <- x2$log2FoldChange > 0
-        c <- a & b
-        return(c)
-    })
-    return(idx1)
-})
-
-l <- list()
-for (n1 in names(restabs)) {
-    l[[n1]] <- list()
-    for (n2 in names(restabs[[n1]])) {
-        l[[n1]][[n2]] <- restabs[[n1]][[n2]][idx, "gene_id"]
-    }
-}
-
-l <- lapply(restabs, fun <- function(x) {
-    for (i in seq_len(length(x))) {
-        x[[i]]
-    }
-})
-
-
-tophervs <- restabs[["TUMvHLT"]][idx, "gene_id"]
-
-
-cohort <- "A"
-restabsA <- load_res_tables("herv", scope="hrv")
-cohort <- "B"
-restabsB <- load_res_tables("herv", scope="hrv")
-cohort <- "C"
-restabsC <- load_res_tables("herv", scope="hrv")
-
-idxA <- lapply(restabsA, fun <- function(x) {
-    a <- x$padj < 0.05
-    b <- x$log2FoldChange > 0
-    c <- a & b
-    return(c)
-})
-
-conds[[1]] <- restabs[["NATvHLT"]]$padj < 0.05
-conds[[2]] <- restabs[["NATvHLT"]]$log2FoldChange > 0
-
 
 
 We then predict the neoantigens most likely to succeed as biomarkers and immunogenic peptides in the treatment of CRC.
