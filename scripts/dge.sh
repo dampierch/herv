@@ -14,7 +14,7 @@
 ## -- for use in snakemake workflow
 ## -- usage: snakemake dge
 
-## -- perform: 0.5h, 10GB for cohort A
+## -- perform: <0.5h, <10GB for cohort A
 
 
 script_name=dge.sh

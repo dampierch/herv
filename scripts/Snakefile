@@ -275,8 +275,8 @@ rule dge:
         # cohort = 'B'
         # cohort = 'C'
     output:
-        ## adj = '/scratch/chd5n/herv/rdata/adj_A.Rda'
-        ## dge = '/scratch/chd5n/herv/rdata/dge_A.Rda'
+        ## dds = '/scratch/chd5n/herv/rdata/dds_A.Rda' -- includes prelim dds and adj
+        ## dge = '/scratch/chd5n/herv/rdata/dge_A.Rda' -- includes tested dds and res
         ## dge = '/scratch/chd5n/herv/rdata/dge_B.Rda'
         ## dge = '/scratch/chd5n/herv/rdata/dge_C.Rda'
         ## res = '/scratch/chd5n/herv/results/tables/res_A_CRCvNAT_all.tsv'

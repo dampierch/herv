@@ -148,8 +148,10 @@ filter_genes <- function(dds, adj, hervs) {
     test_set <- base::unique(targets)
     idx <- rownames(dds) %in% test_set
     dds <- dds[idx, ]
+    idx <- rownames(adj) %in% test_set
+    adj <- adj[idx, ]
     cat("Returning", nrow(dds), "genes in test set\n")
-    return(dds)
+    return(setNames(list(dds, adj), c("dds", "adj")))
 }
 
 
@@ -221,11 +223,11 @@ check_dir <- function(dir) {
 }
 
 
-write_adj <- function(adj, target) {
-    ## save adjusted counts
-    cat("Writing adjusted counts to file\n")
-    save(adj, file=target)
-    cat("adj written to", target, "\n")
+write_dds <- function(ddsobj, target) {
+    ## save prelim dds and adjusted counts
+    cat("Writing ddsobj to file\n")
+    save(ddsobj, file=target)
+    cat("ddsobj written to", target, "\n")
 }
 
 
@@ -278,11 +280,12 @@ main <- function() {
         dds <- run_sva(svaobj, dds)
     }
     adj <- count_adjustment(dds)
-    target <- paste0(Sys.getenv("rdata_dir"), "adj_", cohort, ".Rda")
+    ddsobj <- setNames(list(dds, adj), c("dds", "adj"))
+    target <- paste0(Sys.getenv("rdata_dir"), "dds_", cohort, ".Rda")
     check_dir(Sys.getenv("rdata_dir"))
-    write_adj(adj, target)
-    dds <- filter_genes(dds, adj, inputs$hervs)
-    dgeobj <- test_dge(dds, adj)
+    write_dds(ddsobj, target)
+    ddsobj <- filter_genes(ddsobj$dds, ddsobj$adj, inputs$hervs)
+    dgeobj <- test_dge(ddsobj$dds, ddsobj$adj)
     target <- paste0(Sys.getenv("rdata_dir"), "dge_", cohort, ".Rda")
     check_dir(Sys.getenv("rdata_dir"))
     write_dge(dgeobj, target)
