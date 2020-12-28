@@ -48,6 +48,7 @@ source("res_volcano.R")
 source("res_topherv.R")
 source("res_infla.R")
 source("res_val.R")
+source("res_figs.R")
 
 
 correlation_analysis <- function() {
@@ -162,7 +163,9 @@ if (validate == 1) {
 
 make_figures <- function() {
     fig <- list()
-    fig[[1]] <- fig_supp_cor_field()
+    fig[[1]] <- fig_supp_cor_field_val()
     fig[[2]] <- fig_prelim_expr()
     fig[[3]] <- fig_dge_result()
 }
+
+make_figures()

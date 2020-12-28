@@ -190,11 +190,14 @@ write_valtable <- function(valdf, target) {
     cat("Writing validated results to tex table\n")
     obj <- xtable::xtable(
         valdf,
-        caption="Table 1",
+        caption="Tumor-specific HERV genes validated in independent cohort",
         label="tab_val",
         digits=c(0, 0, 0, 0, 2, 2, 2, 2, 2, 0),
         display=c("d", "s", "f", "f", "f", "f", "f", "E", "E", "s")
     )
-    xtable::print.xtable(obj, file=target, include.rownames=FALSE)
+    xtable::print.xtable(obj, file=target, size="small", include.rownames=FALSE,
+        hline.after=c(0,nrow(obj)), caption.placement="top",
+        sanitize.colnames.function=function(x){paste('{\\textbf{',x,'}}', sep='')}
+    )
     cat("table written to", target, "\n")
 }

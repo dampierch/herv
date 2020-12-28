@@ -1,13 +1,33 @@
 ## to be sourced in results.R
 
 
-write_cor_select <- function(plotlist, target) {
-    p_width <- 6
-    p_height <- 3
-    fig <- cowplot::plot_grid(
+plot_cor_select <- function(plotlist) {
+    cwp <- cowplot::plot_grid(
         plotlist[["TUMvHLT"]], plotlist[["TUMvNAT"]],
         nrow=1, ncol=2,
         labels=c("A", "B")
+    )
+    return(cwp)
+}
+
+
+plot_cor_val_select <- function(plotlist) {
+    cwp <- cowplot::plot_grid(
+        plotlist[[1]], plotlist[[2]],
+        nrow=1, ncol=2,
+        labels=c("C", "D")
+    )
+    return(cwp)
+}
+
+
+write_cor_select <- function(plotlist, target) {
+    p_width <- 6
+    p_height <- 6
+    fig <- cowplot::plot_grid(
+        plotlist=plotlist,
+        nrow=2, ncol=1,
+        labels=c(NULL, NULL)
     )
     pdf(file=target, width=p_width, height=p_height)
     print(fig)
@@ -17,15 +37,25 @@ write_cor_select <- function(plotlist, target) {
 }
 
 
-fig_supp_cor_field <- function() {
-    cat("Making supp fig HERV vs field effect corr\n")
+fig_supp_cor_field_val <- function() {
+    cat("Making supp fig HERV corrs\n")
+    cwpl <- list()
+
     tab_herv <- load_res_tables("herv")
     tab_field <- load_res_tables("field")
     l <- calc_cor(tab_herv, tab_field)
+    l$fig[["TUMvHLT"]] <- l$fig[["TUMvHLT"]] + labs(subtitle="TUM - HLT")
+    l$fig[["TUMvNAT"]] <- l$fig[["TUMvNAT"]] + labs(subtitle="TUM - NAT")
+    cwpl[[1]] <- plot_cor_select(l$fig)
+
+    restabs <- fill_restabs()
+    pl <- val_corr_analysis(restabs)
+    cwpl[[2]] <- plot_cor_val_select(pl)
+
     target_dir <- Sys.getenv("plot_dir")
     check_dir(target_dir)
-    target <- paste0(target_dir, "herv-field-cor-select_A.pdf")
-    fig <- write_cor_select(l$fig, target)
+    target <- paste0(target_dir, "herv-cor-select.pdf")
+    fig <- write_cor_select(cwpl, target)
     return(fig)
 }
 

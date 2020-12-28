@@ -10,6 +10,8 @@
     \usepackage{fontspec}                     %% for \setmainfont command, will need xelatex to compile Arial
     \usepackage[comma,super,sort&compress]{natbib}  %% https://latex.org/forum/viewtopic.php?t=8399
     \usepackage{graphicx}                     %% for figures
+    \usepackage{caption}                      %% for \captionsetup command
+    \usepackage{placeins}                     %% for \FloatBarrier command
 
     %% general document formatting commands
     \pagestyle{plain}                         %% page numbers in middle
@@ -18,6 +20,7 @@
     \setmainfont{Arial}                       %% https://latex.org/forum/viewtopic.php?t=25998
     \setcitestyle{citesep={,}}
     \graphicspath{{figs/}}                    %% set path to figures relative to this document
+    \captionsetup{singlelinecheck=false, justification=justified}
 
     \title{Potential Novel Immunotarget Revealed in Mega Analysis of Colorectal Transcriptomes}
 
@@ -181,7 +184,8 @@ To define an inclusive set of non-canonical HERV elements against which to compa
 The complete annotation included over 1 million transcripts, 416,862 of which overlapped long terminal repeat sequences (i.e. the repeat sequences that flank HERV genes).
 We aimed to discover expression of novel, cancer-specific HERV sequences, so we selected a subset of transcripts composed of exons without GENCODE annotations, at least one of which was classifed as a HERV element.
 There were 16,336 transcripts composed of 35,666 exons from 5,025 genes that met our criteria (Figure \ref{fig:pre_sum}A).
-To estimate gene abundance in colorectal transciptomes, RNA-seq reads from a discovery cohort of 834 colorectal samples (\textbf{Supplementary Table 1}) were quasi-mapped to a transcriptome composed of GENCODE reference transcripts combined with the 16,336 unannotated HERV transcripts using Salmon.
+To estimate gene abundance in colorectal transciptomes, RNA-seq reads from a discovery cohort of 834 colorectal samples were quasi-mapped to a transcriptome composed of GENCODE reference transcripts combined with the 16,336 unannotated HERV transcripts using Salmon.
+Phenotypic and demographic characteristics of the discovery cohort are presented in Table \ref{tab:discovery}.
 A total of 150 unannotated HERV genes were expressed at levels within a standard deviation of canonical protein coding genes.
 Approximately half were from classes K and H, two of the better characterized classes of HERV (Figure \ref{fig:pre_sum}B).
 
@@ -194,11 +198,14 @@ These 11 HERV genes could serve as tumor biomarkers and may also encode proteins
 
 To confirm the significance of the 11 HERV genes, we sought multiple validations of our methods and results.
 First, we verified the consistency of relative protein coding gene expression between tissue phenotypes in the present study and a prior study of the same samples.
-For the comparisons between tumor samples and healthy and tumor adjacent samples, the Pearson correlations coefficients were 0.95 and 0.97, respectively (\textbf{Supplementary Figure 1}).
+For the comparisons between tumor samples and healthy and tumor adjacent samples, the Pearson correlations coefficients were 0.95 and 0.97, respectively (Supplementary Figure \ref{fig:corrs}A,B).
 The high concordance of effect sizes between this study and the prior, which employed similar methods to estimate gene abundance but did not consider HERV transcripts, indicated expansion of the reference transcriptome to include unannotated HERV sequences did not compromise estimates of relative abundance.
 
 Next, we
 
+
+Supplementary Table \ref{tab:ind1}
+Supplementary Table \ref{tab:ind2}
 %validation #1
 %validation #2
 
@@ -226,23 +233,27 @@ HERVs may play a role in maintaining healthy epithelium
 Limitations
 Conclusion
 
+\newpage
 \section*{Acknowledgements}
 
 People we want to thank. Grant support.
 
+\newpage
 \bibliography{main}
 \bibliographystyle{myvancouver}
 
+\newpage
 \section*{Figure Legends}
 
 Legs
 
+\newpage
 \section*{Tables}
-
-Tabs
-
 \input{tabs/tab1.tex}
+\input{tabs/tab2.tex}
 
+\FloatBarrier
+\newpage
 \section*{Figures}
 
 \begin{figure}[ht]
@@ -263,6 +274,24 @@ Tabs
   \label{fig:dge_res}
 \end{figure}
 
+\FloatBarrier
+\newpage
+\section*{Supplementary Tables}
+\input{tabs/spt1.tex}
+\input{tabs/spt2.tex}
+
+\FloatBarrier
+\newpage
+\section*{Supplementary Figures}
+
+\begin{figure}[ht]
+  \makebox[\textwidth][c]
+  {
+    \includegraphics[width=0.9\textwidth]{spf1}
+  }
+  \caption{Correlations of effect sizes across studies and cohorts}
+  \label{fig:corrs}
+\end{figure}
 
 \end{document}
 
