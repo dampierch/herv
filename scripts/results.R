@@ -30,6 +30,7 @@ library(cowplot)
 library(reshape2)
 library(dplyr)
 library(xtable)
+library(EnsDb.Hsapiens.v86)
 
 
 args <- commandArgs(trailingOnly=TRUE)
@@ -154,4 +155,14 @@ if (validate == 1) {
     print(l2)
 } else {
     main()
+}
+
+
+### DEVS
+
+make_figures <- function() {
+    fig <- list()
+    fig[[1]] <- fig_supp_cor_field()
+    fig[[2]] <- fig_prelim_expr()
+    fig[[3]] <- fig_dge_result()
 }

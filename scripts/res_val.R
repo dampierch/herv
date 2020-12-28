@@ -137,7 +137,7 @@ build_val_df <- function(restabs, l) {
         return(vt)
     })
     valdf <- rbind(valtabs$C$res_C_CRCvHLT_hrv, valtabs$C$res_C_CRCvNAT_hrv)
-    fields <- c("gene_id", "log2FoldChange", "lfcSE", "stat", "pvalue", "padj")
+    fields <- c("gene_id", "baseMean", "log2FoldChange", "lfcSE", "stat", "pvalue", "padj")
     valdf <- valdf[!duplicated(valdf$gene_id), fields]
     valdf$fc <- round(2 ^ valdf$log2FoldChange)
     valdf$CTL <- unlist(
@@ -173,13 +173,15 @@ build_val_df <- function(restabs, l) {
         )
     )
     valdf <- valdf[valdf$order, ]
-    fields <- c("HERV ID", "log2(FC)", "SE", "Stat", "P", "P^", "FC", "CTL", "HERV", "o")
+    fields <- c("HERV ID", "Mean", "Log2(FC)", "SE", "Stat", "P", "P Adj", "FC", "CTL", "HERV", "o")
     colnames(valdf) <- fields
-    fields <- c("HERV", "HERV ID", "FC", "log2(FC)", "SE", "Stat", "P", "P^", "CTL")
+    fields <- c("HERV", "Mean", "FC", "Log2(FC)", "SE", "Stat", "P", "P Adj", "CTL")
     valdf <- valdf[ , fields]
-    for (i in c("log2(FC)", "SE", "Stat", "P", "P^")) {
+    for (i in c("Mean", "Log2(FC)", "SE", "Stat", "P", "P Adj")) {
         valdf[ , i] <- signif(valdf[ , i], 2)
     }
+    valdf$HERV <- gsub("HERV", "", valdf$HERV)
+    valdf$HERV <- gsub("_", " ", valdf$HERV)
     return(valdf)
 }
 
@@ -189,8 +191,10 @@ write_valtable <- function(valdf, target) {
     obj <- xtable::xtable(
         valdf,
         caption="Table 1",
-        label="tab_val"
+        label="tab_val",
+        digits=c(0, 0, 0, 0, 2, 2, 2, 2, 2, 0),
+        display=c("d", "s", "f", "f", "f", "f", "f", "E", "E", "s")
     )
-    xtable::print.xtable(obj, file=target)
+    xtable::print.xtable(obj, file=target, include.rownames=FALSE)
     cat("table written to", target, "\n")
 }

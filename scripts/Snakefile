@@ -276,7 +276,7 @@ rule dge:
         # cohort = 'C'
     output:
         ## dds = '/scratch/chd5n/herv/rdata/dds_A.Rda' -- includes prelim dds and adj
-        ## dge = '/scratch/chd5n/herv/rdata/dge_A.Rda' -- includes tested dds and res
+        ## dge = '/scratch/chd5n/herv/rdata/dge_A.Rda' -- includes tested dds, adj, and res
         ## dge = '/scratch/chd5n/herv/rdata/dge_B.Rda'
         ## dge = '/scratch/chd5n/herv/rdata/dge_C.Rda'
         ## res = '/scratch/chd5n/herv/results/tables/res_A_CRCvNAT_all.tsv'
@@ -322,3 +322,15 @@ rule results:
             {params.cohort} \
             {params.validate}
         '''
+
+rule manuscript:
+    input:
+        main = '../manuscript/main.tex',
+        fig1 = '/scratch/chd5n/herv/results/plots/herv-prelim-expr_A.pdf',
+        fig2 = '/scratch/chd5n/herv/results/plots/herv-dge-result.pdf',
+        tab1 = '/scratch/chd5n/herv/results/tables/herv-val-table.tex',
+        sh = 'xelatex.sh'
+    output:
+        res = '../manuscript/main.pdf'
+    shell:
+        'sh {input.sh} {input.fig1} {input.fig2} {input.tab1}'
