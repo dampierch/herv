@@ -1,0 +1,42 @@
+\subsection*{Over-Expression of Novel HERV Genes in Tumors}
+To define an inclusive set of non-canonical HERV elements against which to compare CRC transcripts, we started with a recently published model of the human cancer transcriptome assembled \emph{de novo} from TCGA samples and annotated with RepeatMasker using the Dfam database \citep{Attig2019}.
+The complete annotation included over 1 million transcripts, 416,862 of which overlapped long terminal repeat sequences (i.e. the repeat sequences that flank HERV genes).
+We aimed to discover expression of novel, cancer-specific HERV sequences, so we selected a subset of transcripts composed of exons without GENCODE annotations, at least one of which was classifed as a HERV element.
+There were 16,336 transcripts composed of 35,666 exons from 5,025 genes that met our criteria (Figure \ref{fig:pre_sum}A).
+To estimate gene abundance in colorectal transciptomes, RNA-seq reads from a discovery cohort of 834 colorectal samples were quasi-mapped to a transcriptome composed of GENCODE reference transcripts combined with the 16,336 unannotated HERV transcripts using Salmon.
+Phenotypic and demographic characteristics of the discovery cohort are presented in Table \ref{tab:discovery}.
+A total of 150 unannotated HERV genes were expressed at levels within a standard deviation of canonical protein coding genes.
+Approximately half were from classes K and H, two of the better characterized classes of HERV (Figure \ref{fig:pre_sum}B).
+
+To identify HERV genes that could encode tumor specific neoantigens, we compared expression levels in tumor samples to levels in healthy samples and tumor adjacent, histologically normal samples.
+We have previously shown that a transcriptomic field effect in the setting of CRC can mask cancer specificity of some genes when tumor transcripts are compared to tumor adjacent normal transcripts \citep{Dampier2020}.
+Without \emph{a priori} knowledge of whether HERV genes are likely to be affected by the transcriptomic field effect, we compared tumor samples to healthy samples and tumor adjacent samples separately.
+Out of 150 HERV genes tested, 28 were over-expressed in tumor samples relative to healthy samples, and 14 were over-expressed in tumor samples relative to tumor adjacent samples (Figure \ref{fig:dge_res}A,B, red points).
+We intersected these two lists to identify 11 HERV genes over-expressed in tumors relative to both healthy and tumor adjacent samples (Figure \ref{fig:dge_res}C).
+These 11 HERV genes could serve as tumor biomarkers and may also encode proteins unknown to the adaptive immune system that could serve as targets for immune therapy with lower likelihood of off target effects.
+
+To confirm the significance of the 11 HERV genes, we sought multiple validations of our methods and results.
+First, we verified the consistency of relative protein coding gene expression between tissue phenotypes in the present study and a prior study of the same samples.
+For the comparisons between tumor samples and healthy and tumor adjacent samples, the Pearson correlations coefficients were 0.95 and 0.97, respectively (Supplementary Figure \ref{fig:corrs}A,B).
+The high concordance of effect sizes between this study and the prior, which employed similar methods to estimate gene abundance but did not consider HERV transcripts, indicated expansion of the reference transcriptome to include unannotated HERV sequences did not compromise estimates of relative abundance.
+
+Next, we
+
+
+Supplementary Table \ref{tab:ind1}
+Supplementary Table \ref{tab:ind2}
+
+We then predict the neoantigens most likely to succeed as biomarkers and immunogenic peptides in the treatment of CRC.
+
+then cohorts B and C
+then cohort A without Attig TCGA 48 + 18 (24 COAD tumor, 24 READ tumor, 12 COAD NAT, 6 READ NAT) and GTEx 12
+then MSI vs MSS
+then tumors with most HERV overexpression
+then immunogenic peptide prediction
+
+\subsection*{HERV Genes in Healthy Tissue}
+
+Healthy overexpression ... functional role
+cohort A
+then cohorts B and C
+then Grabski method

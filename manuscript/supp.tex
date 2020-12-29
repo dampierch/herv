@@ -1,4 +1,104 @@
+\documentclass[11pt,letterpaper]{article}
 
+    %% load packages
+    \usepackage[margin=1in]{geometry}         %% document margins
+    \usepackage[utf8]{inputenc}
+    \usepackage{setspace}                     %% to get \doublespacing command
+    \usepackage{authblk}                      %% to get \affil command
+    \usepackage{bibentry}                     %% bib formatting
+    \usepackage{parskip}                      %% space between paragraphs
+    \usepackage{fontspec}                     %% for \setmainfont command, will need xelatex to compile Arial
+    \usepackage[comma,super,sort&compress]{natbib}  %% https://latex.org/forum/viewtopic.php?t=8399
+    \usepackage{graphicx}                     %% for figures
+    \usepackage{caption}                      %% for \captionsetup command
+    \usepackage{placeins}                     %% for \FloatBarrier command
 
-The number of significant latent factors was estimated with the \verb|num.sv| function with the the Buja Eyuboglu method using a full model with terms for an intercept and tissue phenotype.
-The latent factors themselves were estimated with the \verb|svaseq| function using the same full model and a null model with an intercept term alone.
+    %% general document formatting commands
+    \pagestyle{plain}                         %% page numbers in middle
+    %\linespread{1.67}                        %% baseline linespread = 1.2 (1.2*1.67~2)
+    \doublespacing
+    \setmainfont{Arial}                       %% https://latex.org/forum/viewtopic.php?t=25998
+    \setcitestyle{citesep={,}}
+    \graphicspath{{figs/}}                    %% set path to figures relative to this document
+    \captionsetup{singlelinecheck=false, justification=justified}
+
+    \title{Supplement to Potential Novel Immunotarget Revealed in Mega Analysis of Colorectal Transcriptomes}
+
+    \author[1]{Christopher H. Dampier, MD}
+    \author[2]{David F. Grabski, MD, PhD}
+    \author[1]{Matthew Devall, PhD}
+    \author[3]{Virginia Diez-Obrero, BS}
+    \author[3]{Ferran Moratalla-Navarro, MS}
+    \author[4]{David Rekosh, PhD}
+    \author[4]{Marie-Louise Hammarskjold, PhD}
+    \author[5]{Sara K. Rasmussen, MD, PhD}
+    \author[3]{Victor Moreno, MD, PhD}
+    \author[1]{Graham Casey, PhD}
+
+    \affil[1]{Center for Public Health Genomics, University of Virginia, Charlottesville, Virginia, USA}
+    \affil[2]{Department of Surgery, University of Virginia, Charlottesville, Virginia, USA}
+    \affil[3]{Catalan Institute of Oncology, Barcelona, Spain}
+    \affil[4]{Department of Microbiology, Immunology and Cancer Biology, University of Virginia, Charlottesville, Virginia, USA}
+    \affil[5]{Department of Surgery, Seattle Children's, Seattle, Washington, USA}
+
+    %% redefine maketitle function to customize title formatting
+        %% https://tex.stackexchange.com/questions/85343/left-align-abstract-title-and-authors
+        %% https://en.wikibooks.org/wiki/LaTeX/Fonts#Sizing_text
+    \makeatletter
+    \renewcommand{\maketitle}{
+        \begingroup
+            \setlength{\parindent}{0pt}
+            \begin{flushleft}
+                \LARGE\textbf{\@title}
+                \newline
+                \newline
+                \normalsize\@author
+            \end{flushleft}
+        \endgroup
+    }
+    \makeatother
+
+\begin{document}
+
+\maketitle
+
+\newpage
+\section*{Supplementary Methods}
+\input{sups/section.tex}
+
+\newpage
+\bibliography{main}
+\bibliographystyle{myvancouver}
+
+\newpage
+\section*{Supplementary Figure Legends}
+\input{sups/section.tex}
+
+\newpage
+\section*{Supplementary Tables}
+\input{tabs/spt1.tex}
+\input{tabs/spt2.tex}
+
+\FloatBarrier
+\newpage
+\section*{Supplementary Figures}
+
+\begin{figure}[ht]
+  \makebox[\textwidth][c]
+  {
+    \includegraphics[width=0.9\textwidth]{spf1}
+  }
+  \caption{Correlations of effect sizes across studies and cohorts}
+  \label{fig:corrs}
+\end{figure}
+
+\begin{figure}[ht]
+  \makebox[\textwidth][c]
+  {
+    \includegraphics[width=0.9\textwidth]{spf2}
+  }
+  \caption{Boxplots re-demonstrating healthy-specific over-expression using a different HERV transcriptome}
+  \label{fig:grabski_method}
+\end{figure}
+
+\end{document}

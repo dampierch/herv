@@ -1,0 +1,55 @@
+\subsection*{Sample Selection}
+Bulk RNA sequencing (RNA-seq) from a recently curated set of 1,139 flash frozen colorectal tissue samples was re-processed and analyzed for the presence of unannotated HERV genes \citep{Dampier2020}.
+For discovery of associations between tissue phenotypes and HERV expression, paired end sequencing from 834 colon biopsies was used.
+Of those biopsies, 462 were healthy tissue, 61 were tumor adjacent normal tissue, and 311 were tumors.
+These samples are referred to as the discovery cohort.
+
+For validation of discovered associations, two independent cohorts were used.
+The first (independent cohort \#1) included single end sequencing from 275 colon biopsies of which NUMBER were healthy, NUMBER were tumor adjacent, and NUMBER were tumor.
+The second (independent cohort \#2) included paired end sequencing from 30 pairs of tumor and matched adjacent normal biopsies (i.e. 15 samples of both tissue phenotypes paired by subject).
+An important characteristic of the discovery cohort and independent cohort \#1 was the independence of all tumor and tumor adjacent samples.
+To permit valid inference from regular linear models, only one tissue phenotype was used per subject.
+
+Samples were gathered from publicly available RNA-seq datasets hosted on the Genomic Data Commons and Sequence Read Archive as well as from a recently generated dataset of healthy mucosal biopsies obtained during screening colonoscopies at the Catalan Institute of Oncology in Barcelona, Spain \citep{Dampier2020, DiezObrero2020}.
+A complete description of sample selection and cohort construction for the curated dataset is available in Dampier et al. \citep{Dampier2020}.
+RNA-seq reads for all samples were stored and analyzed in FASTQ format.
+For samples downloaded in BAM format, Biobambam2 v2.0.87 \citep{Tischler2014} was used to convert reads to FASTQ format.
+
+\subsection*{Human Endogenous Retrovirus Gene Annotation}
+HERVs were identified using the genomic coordinates (GRCh38) and feature names of exons and spliced transcripts of HERV elements from a recently published human cancer transcriptome annotated with the GENCODE v24 basic gene model \citep{Frankish2018} and a model of genome-wide repeat elements \citep{Attig2019}.
+The cancer transcriptome was assembled from RNA-seq reads of 24 subjects from each of 32 cancer types obtained from The Cancer Genome Atlas (TCGA), as previously described \citep{Attig2019}.
+Names and coordinates of repeat elements were generated using RepeatMasker \citep{Smit2015} configured with nhmmer \citep{Wheeler2013} in sensitive mode using the Dfam 2.0 library (v150923) \citep{Hubley2015}, as previously described \citep{Attig2017}.
+The method relies on profile hidden Markov models representing known human repeat families to classify repeat elements throughout the genome.
+
+Previously unannotated HERV genes were selected for the current study in multiple steps.
+A complete gene transfer format (GTF) \citep{GTF} annotation of the repeat element inclusive cancer transcriptome was downloaded from Attig et al. \citep{Attig2019}.
+The annotation was parsed with a custom Python script to produce a new annotation in BED12 \citep{BED12} format.
+Transcripts were selected based on three criteria: i) overlap of at least one exon with a long terminal repeat element, ii) classification of at least one exon as HERV derived, and iii) abscence of any exon overlapping an annotated GENCODE gene.
+All transcripts labeled with the same repeat element identifier (i.e. repeat element class along with genomic coordinates) were considered isoforms of the same HERV gene.
+Genomic coordinates were extracted for all constituent exons of selected transcripts to permit inference of splice sites and exclusion of intronic sequences.
+For display purposes, repeat element identifier genomic coordinates were converted to cytobands.
+
+\subsection*{Transcript Quantification}
+Transcript quantification was performed with Salmon v1.2.1 \citep{Patro2017} in mapping-based mode with the \verb|--gcBias| and \verb|--validateMappings| flags set.
+Inputs to the Salmon \verb|quant| command were RNA-seq reads in FASTQ format and the Salmon index.
+To create the Salmon index, a custom reference transcriptome was built from a list of GENCODE v34  transcript sequences \citep{Frankish2018} and the list of unannotated HERV transcript sequences.
+GENCODE sequences were downloaded from the GENCODE FTP site \citep{GENCODE-transcripts}.
+HERV sequences were extracted from the GRCh38 reference genome \citep{ENCODE-GRCh38} using the BEDTools \citep{Quinlan2010} \verb|getfasta| command with the \verb|-split| option and the custom BED12 annotation of selected HERV transcripts.
+Following the recommendation of Salmon's authors \citep{SalmonDecoys}, contig sequences from the GRCh38 reference genome were subsequently added to the target transcript sequences as decoy sequences to generate a decoy-aware transcriptome for indexing.
+
+\subsection*{Gene Expression Analysis}
+Associations between HERV gene expression and tissue phenotype were tested using the \emph{Bioconductor} suite of genomics analysis packages \citep{bioc} in the R statistical programming language \citep{R}.
+Specifically, \emph{tximport} \citep{Soneson2015} was used to extract transcript length and abundance estimates from Salmon and summarize them to the gene level for input into \emph{DESeq2} \citep{Love2014}.
+Count matrices of HERV and GENCODE genes were prefiltered to select genes with a count of at least one read in at least half of the samples in each cohort.
+Factors to normalize counts for sequencing depth and transcript length were calculated with \emph{DESeq2}.
+Latent factors of non-biological variation were estimated with \emph{sva} \citep{sva}.
+Genes of interest for association testing were selected in several steps.
+
+First, counts of all genes were transformed with the variance stabilizing transformation of \emph{DESeq2} and adjusted for batch effects with \emph{limma} \citep{Ritchie2015}.
+Second, adjusted counts of all annotated genes were filtered to retain only protein coding genes.
+Third, median and standard deviation of protein coding gene expression were calculated separately for each tissue phenotype in each cohort.
+Finally, adjusted counts of HERV genes were filtered to retain only HERVs expressed within a single standard deviation of median protein coding gene expression in at least one tissue phenotype.
+
+Counts of all protein coding genes and HERVs with sufficient expression were modeled with phenotype and latent factors as explanatory variables using \emph{DESeq2}.
+Significant associations between gene count and tissue phenotype were identified by testing whether the absolute value of the effect of phenotype was at least two fold change for a given gene.
+Multiple hypothesis testing correction was performed using a false discovery rate of 5\%.

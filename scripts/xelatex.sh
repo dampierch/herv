@@ -26,8 +26,15 @@ export PATH=$PATH:/home/chd5n/apps/texlive/2020/bin/x86_64-linux
 cd ../manuscript/
 rm main.{aux,bbl,blg,log,pdf}
 rm ._main.pdf
+rm supp.{aux,bbl,blg,log,pdf}
+rm ._supp.pdf
 
 xelatex main
 bibtex main
 xelatex main
 xelatex main
+
+xelatex supp
+bibtex supp
+xelatex supp
+xelatex supp
