@@ -217,6 +217,7 @@ write_dge_result <- function(plotlist, target) {
     print(fig)
     dev.off()
     cat("figure written to", target, "\n")
+    return(fig)
 }
 
 
@@ -245,4 +246,201 @@ fig_dge_result <- function() {
     target <- paste0(target_dir, "herv-dge-result.pdf")
     fig <- write_dge_result(cwpl, target)
     return(fig)
+}
+
+
+get_herv_cat <- function(hervids) {
+    maincats <- c("HERVE", "HERVH", "HERVK", "HERVL")
+    maincls <- c("E", "H", "K", "L")
+    nms <- unname(sapply(lapply(strsplit(hervids, "[|]"), unpack_id), head, 1))
+    a <- sapply(nms, fun <- function(x) {
+        if (x %in% maincats) {
+            y <- plyr::mapvalues(x, from=maincats, to=maincls, warn_missing=FALSE)
+        } else {
+            y <- "Other"
+        }
+        return(y)
+    }, USE.NAMES=FALSE)
+    return(a)
+}
+
+
+get_heat_data <- function(target) {
+    cat("Getting data ready for heatmap\n")
+    load(target, verbose=TRUE)
+
+    hrvadj <- dgeobj$adj[grepl("HERV", rownames(dgeobj$adj)), ]
+    hrvmn <- apply(hrvadj, 1, mean)
+    hrvsd <- apply(hrvadj, 1, sd)
+    hrvz <- data.frame((hrvadj - hrvmn) / hrvsd)
+    colnames(hrvz) <- colData(dgeobj$dds)$subject_id
+    hrvz <- hrvz[ , order(colData(dgeobj$dds)$phenotype)]
+    hrvz$herv_id <- rownames(hrvz)
+    hrvz$herv_cl <- get_herv_cat(hrvz$herv_id)
+    hrvz <- hrvz[order(hrvz$herv_cl, decreasing=TRUE), ]
+    hrvz$n <- 0
+    for (i in levels(as.factor(hrvz$herv_cl))) {
+        hrvz[hrvz$herv_cl == i, "n"] <- seq_len(nrow(hrvz[hrvz$herv_cl == i, ]))
+    }
+    hrvz$y <- paste(hrvz$herv_cl, hrvz$n, sep="_")
+    hrvz <- hrvz[ , !(colnames(hrvz) == "n")]
+
+    df <- melt(
+        hrvz,
+        id.vars=c("herv_id", "herv_cl", "y"),
+        variable.name="subj_id",
+        value.name="Z"
+    )
+    df$pheno <- plyr::mapvalues(
+          df$subj_id,
+          from=colData(dgeobj$dds)$subject_id,
+          to=as.character(colData(dgeobj$dds)$phenotype)
+    )
+    df$pheno <- as.character(df$pheno)
+    df[df$pheno == "CRC", "pheno"] <- "TUM"
+    df$n <- 0
+    for (i in levels(as.factor(df$pheno))) {
+        df[df$pheno == i, "n"] <- plyr::mapvalues(
+            as.character(df[df$pheno == i, "subj_id"]),
+            from=unique(as.character(df[df$pheno == i, "subj_id"])),
+            to=seq_len(length(unique(as.character(df[df$pheno == i, "subj_id"]))))
+        )
+    }
+    df$x <- paste(df$pheno, df$n, sep="_")
+    df <- df[ , !(colnames(df) == "n")]
+    return(df)
+}
+
+
+plot_heat_big <- function(df) {
+    ggp <- ggplot(df, aes(x=x, y=y, fill=Z)) +
+        geom_raster() +
+        scale_fill_gradient(low="white", high="black", name="Z-score") +
+        scale_y_discrete(limits=rev(levels(as.factor(df$y)))) +
+        coord_cartesian(clip="off") +
+        ggp_theme_heat +
+        theme(
+            axis.text.x=element_blank(),
+            axis.text.y=element_blank()
+        )
+
+    N <- list()
+    text <- list()
+    par <- list()
+    N$HLT <- max(as.numeric(unlist(lapply(strsplit(df[df$pheno=="HLT", "x"], "_"), "[", 2))))
+    N$NAT <- max(as.numeric(unlist(lapply(strsplit(df[df$pheno=="NAT", "x"], "_"), "[", 2))))
+    N$TUM <- max(as.numeric(unlist(lapply(strsplit(df[df$pheno=="TUM", "x"], "_"), "[", 2))))
+    text$HLT <- grid::textGrob("HLT", gp=grid::gpar(fontsize=10))
+    text$NAT <- grid::textGrob("NAT", gp=grid::gpar(fontsize=10))
+    text$TUM <- grid::textGrob("TUM", gp=grid::gpar(fontsize=10))
+    par$HLT <- c((N$HLT / 2) - 5, (N$HLT / 2) + 5, -5, -5)
+    par$NAT <- c(N$HLT + (N$NAT / 2) - 5, N$HLT + (N$NAT / 2) + 5, -5, -5)
+    par$TUM <- c(N$HLT + N$NAT + (N$TUM / 2) - 5, N$HLT + N$NAT + (N$TUM / 2) + 5,
+        -5, -5)
+    ggp <- ggp +
+        annotation_custom(text$HLT, xmin=par$HLT[1], xmax=par$HLT[2], ymin=par$HLT[3], ymax=par$HLT[4]) +
+        annotation_custom(text$NAT, xmin=par$NAT[1], xmax=par$NAT[2], ymin=par$NAT[3], ymax=par$NAT[4]) +
+        annotation_custom(text$TUM, xmin=par$TUM[1], xmax=par$TUM[2], ymin=par$TUM[3], ymax=par$TUM[4])
+
+    N1 <- list()
+    text1 <- list()
+    par1 <- list()
+    N1$E <- max(as.numeric(unlist(lapply(strsplit(df[df$herv_cl=="E", "y"], "_"), "[", 2))))
+    N1$H <- max(as.numeric(unlist(lapply(strsplit(df[df$herv_cl=="H", "y"], "_"), "[", 2))))
+    N1$K <- max(as.numeric(unlist(lapply(strsplit(df[df$herv_cl=="K", "y"], "_"), "[", 2))))
+    N1$L <- max(as.numeric(unlist(lapply(strsplit(df[df$herv_cl=="L", "y"], "_"), "[", 2))))
+    N1$Other <- max(as.numeric(unlist(lapply(strsplit(df[df$herv_cl=="Other", "y"], "_"), "[", 2))))
+    text1$E <- grid::textGrob("E", rot=0, gp=grid::gpar(fontsize=10))
+    text1$H <- grid::textGrob("H", rot=0, gp=grid::gpar(fontsize=10))
+    text1$K <- grid::textGrob("K", rot=0, gp=grid::gpar(fontsize=10))
+    text1$L <- grid::textGrob("L", rot=0, gp=grid::gpar(fontsize=10))
+    text1$Other <- grid::textGrob("O", rot=0, gp=grid::gpar(fontsize=10))
+    par1$Other <- c(-15, -15, (N1$Other / 2) - 5, (N1$Other / 2) + 5)
+    par1$L <- c(-15, -15, N1$Other + (N1$L / 2) - 5, N1$Other + (N1$L / 2) + 5)
+    par1$K <- c(-15, -15, N1$Other + N1$L + (N1$K / 2) - 5,
+        N1$Other + N1$L + (N1$K / 2) + 5)
+    par1$H <- c(-15, -15, N1$Other + N1$L + N1$K + (N1$H / 2) - 5,
+        N1$Other + N1$L + N1$K + (N1$H / 2) + 5)
+    par1$E <- c(-15, -15, N1$Other + N1$L + N1$K + N1$H + (N1$E / 2) - 5,
+        N1$Other + N1$L + N1$K + N1$H + (N1$E / 2) + 5)
+    ggp <- ggp +
+        annotation_custom(text1$E, xmin=par1$E[1], xmax=par1$E[2], ymin=par1$E[3], ymax=par1$E[4]) +
+        annotation_custom(text1$H, xmin=par1$H[1], xmax=par1$H[2], ymin=par1$H[3], ymax=par1$H[4]) +
+        annotation_custom(text1$K, xmin=par1$K[1], xmax=par1$K[2], ymin=par1$K[3], ymax=par1$K[4]) +
+        annotation_custom(text1$L, xmin=par1$L[1], xmax=par1$L[2], ymin=par1$L[3], ymax=par1$L[4]) +
+        annotation_custom(text1$Other, xmin=par1$Other[1], xmax=par1$Other[2],
+            ymin=par1$Other[3], ymax=par1$Other[4])
+    return(ggp)
+}
+
+
+plot_heat_small <- function(df) {
+    ggp <- ggplot(df, aes(x=pheno, y=herv_cl, fill=Z)) +
+        geom_tile() +
+        scale_fill_gradient(low="white", high="black", name="Z-score") +
+        scale_y_discrete(limits=rev(levels(as.factor(df$herv_cl)))) +
+        ggp_theme_heat
+    return(ggp)
+}
+
+
+write_heat <- function(plotlist, target) {
+    p_width <- 9
+    p_height <- 4
+    fig <- cowplot::plot_grid(
+        plotlist=plotlist,
+        nrow=1,
+        ncol=2,
+        labels=c("A", "B"),
+        rel_widths=c(1, 0.8)
+    )
+    pdf(file=target, width=p_width, height=p_height)
+    print(fig)
+    dev.off()
+    cat("figure written to", target, "\n")
+    return(fig)
+}
+
+
+fig_heat <- function() {
+    pl <- list()
+    target <- paste0(Sys.getenv("rdata_dir"), "dge_A.Rda")
+    df <- get_heat_data(target)
+    pl[[1]] <- plot_heat_big(df)
+    pl[[2]] <- plot_heat_small(df)
+    target_dir <- Sys.getenv("plot_dir")
+    check_dir(target_dir)
+    target <- paste0(target_dir, "herv-heat.pdf")
+    fig <- write_heat(pl, target)
+    return(fig)
+}
+
+
+devs_ordering <- function() {
+    ## miscellaneous code that may be helpful some day for ordering data
+    idx <- list()
+    for (i in levels(as.factor(df$pheno))) {
+        idx[[i]] <- df$pheno == i
+    }
+
+    start_num <- 0
+    for (i in seq_len(length(idx))) {
+        df[idx[[i]], "xorder"] <- seq.int(
+            max(c(start_num, max(df$xorder))) + 1,
+            max(c(start_num, max(df$xorder))) + sum(idx[[i]])
+        )
+    }
+
+    idx <- list()
+    for (i in levels(as.factor(df$herv_cl))) {
+        idx[[i]] <- df$herv_cl == i
+    }
+
+    start_num <- 0
+    for (i in seq_len(length(idx))) {
+        df[idx[[i]], "yorder"] <- seq.int(
+            max(c(start_num, max(df$yorder))) + 1,
+            max(c(start_num, max(df$yorder))) + sum(idx[[i]])
+        )
+    }
 }

@@ -166,6 +166,7 @@ make_figures <- function() {
     fig[[1]] <- fig_supp_cor_field_val()
     fig[[2]] <- fig_prelim_expr()
     fig[[3]] <- fig_dge_result()
+    fig[[4]] <- fig_heat()
 }
 
 make_figures()

@@ -328,9 +328,11 @@ rule manuscript:
         main = '../manuscript/main.tex',
         fig1 = '/scratch/chd5n/herv/results/plots/herv-prelim-expr_A.pdf',
         fig2 = '/scratch/chd5n/herv/results/plots/herv-dge-result.pdf',
+        fig3 = '/scratch/chd5n/herv/results/plots/herv-heat.pdf',
         tab1 = '../manuscript/tabs/tab_disc.tex',
         tab2 = '/scratch/chd5n/herv/results/tables/herv-val-table.tex',
         spf1 = '/scratch/chd5n/herv/results/plots/herv-cor-select.pdf',
+        spf2 = '/scratch/chd5n/meta/herv/metaPhenoPeUqSampIndSmpAllGeDesResLfcHervExp.pdf',
         spt1 = '../manuscript/tabs/tab_ind1.tex',
         spt2 = '../manuscript/tabs/tab_ind2.tex',
         sh = 'xelatex.sh'
@@ -339,8 +341,8 @@ rule manuscript:
     shell:
         '''
         sh {input.sh} \
-            {input.fig1} {input.fig2} \
+            {input.fig1} {input.fig2} {input.fig3} \
             {input.tab1} {input.tab2} \
-            {input.spf1} \
+            {input.spf1} {input.spf2} \
             {input.spt1} {input.spt2}
         '''
