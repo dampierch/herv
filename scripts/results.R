@@ -31,6 +31,7 @@ library(reshape2)
 library(dplyr)
 library(xtable)
 library(EnsDb.Hsapiens.v86)
+library(scales)
 
 
 args <- commandArgs(trailingOnly=TRUE)

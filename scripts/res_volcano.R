@@ -66,9 +66,9 @@ plot_volcano <- function(df, label) {
         # geom_point(data=base::subset(df, herv==TRUE & effect<0),
         #     size=1, stroke=0, shape=16, colour="blue", alpha=0.25) +
         geom_point(data=base::subset(df, herv==TRUE & effect>0 & padj<0.05),
-            size=1.75, stroke=0, shape=16, colour="red", alpha=0.25) +
+            size=1.75, stroke=0, shape=16, colour=muted("red"), alpha=0.25) +
         geom_point(data=base::subset(df, herv==TRUE & effect<0 & padj<0.05),
-            size=1.75, stroke=0, shape=16, colour="blue", alpha=0.25) +
+            size=1.75, stroke=0, shape=16, colour=muted("blue"), alpha=0.25) +
         labs(
             title=element_blank(),
             subtitle=ggp_subtitle,
