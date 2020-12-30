@@ -63,7 +63,7 @@ format_counts <- function(tophervs, dgeobj) {
 plot_counts <- function(dfs) {
     cat("Making box plots\n")
     color_values <- c("blue", "grey", "red")
-    ggp_title <- "Expression Levels of Select HERV Genes"
+    ggp_title <- "Expression Levels of Select HERV Loci"
     ggp_ylab <- "Scaled Counts"
     lidx <- 0
     pl <- list()

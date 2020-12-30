@@ -14,7 +14,7 @@ count_herv_ids <- function(gtf, ids) {
     df <- data.frame(readr::read_tsv(ids))
     x2 <- nrow(df)
     x3 <- length(unique(df$herv_id))
-    nms <- c("Total Transcripts", "Select Transcripts", "HERV Genes")
+    nms <- c("Total Transcripts", "Select Transcripts", "HERV Loci")
     return(setNames(list(x1, x2, x3), nms))
 }
 
@@ -54,7 +54,7 @@ fill_params <- function(l, params) {
         params[["ggp_sub"]] <- paste("From", n, "starting transcripts")
         l <- l[names(l) != "Total Transcripts"]
     } else {
-        params[["ggp_title"]] <- "Classes of HERV Genes Tested"
+        params[["ggp_title"]] <- "Classes of HERV Loci Tested"
         params[["ggp_sub"]] <- element_blank()
     }
     params[["ggp_ylab"]] <- "Counts"

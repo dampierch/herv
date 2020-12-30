@@ -78,15 +78,15 @@ load_inputs_prelim_expr <- function(target1, target2, target3) {
 
 plot_prelim_expr <- function(pcg, hervs, ddsobj, pheno=NULL) {
     cat("Plotting prelim expr\n")
-    ggp_title <- "Protein Coding and HERV Genes"
-    ggp_xlab <- "Expression Level (All)"
-    ggp_ylab <- "Number of Genes"
+    ggp_title <- "GENCODE Genes and HERV Loci"
+    ggp_xlab <- "Expression Level (All Samples)"
+    ggp_ylab <- "Number of Genes/Loci"
     idx <- rownames(ddsobj$adj) %in% pcg
     adjpcg <- ddsobj$adj[idx, ]
     idx <- rownames(ddsobj$adj) %in% hervs
     adjhrv <- ddsobj$adj[idx, ]
     if (!is.null(pheno)) {
-        ggp_xlab <- "Expression Level (TUM)"
+        ggp_xlab <- "Expression Level (Tumor Samples)"
         idx <- colData(ddsobj$dds)$phenotype == pheno
         adjpcg <- adjpcg[ , idx]
         adjhrv <- adjhrv[ , idx]
@@ -135,7 +135,7 @@ run_hrvnums2 <- function(hervs, ddsobj, dgeobj) {
     x3 <- sum(rownames(ddsobj$adj) %in% hervs)
     x4 <- sum(rownames(dgeobj$adj) %in% hervs)
     labs <- c("Total Transcripts", "Selected Transcripts",
-        "Selected HERV Genes", "Detected HERV Genes", "Tested HERV Genes")
+        "Selected HERV Loci", "Detected HERV Loci", "Tested HERV Loci")
     return(setNames(list(x0, x1, x2, x3, x4), labs))
 }
 
@@ -166,7 +166,7 @@ fig_prelim_expr <- function() {
     hrvnums <- run_hrvnums2(l$hervs, l$ddsobj, l$dgeobj)
     hrvnames <- rownames(l$dgeobj$adj)[grepl("HERV", rownames(l$dgeobj$adj))]
     hrvcats <- count_herv_cats(hrvnames)
-    sumlist <- setNames(list(hrvnums, hrvcats), c("HERV Genes", "HERV Classes"))
+    sumlist <- setNames(list(hrvnums, hrvcats), c("HERV Loci", "HERV Classes"))
     pl <- plot_hrvsum(sumlist)
     pl[[1]] <- pl[[1]] +
         labs(title="HERV Elements Studied") +
@@ -237,7 +237,7 @@ fig_dge_result <- function() {
     pl <- plot_counts(dfs)
     pl[[1]] <- pl[[1]] +
         labs(title=element_blank(),
-            subtitle="Expression Levels of Tumor-Specific HERV Genes"
+            subtitle="Expression Levels of Tumor Specific HERV Loci"
         )
     cwpl[[2]] <- plot_counts_select(pl)
 
@@ -313,6 +313,7 @@ get_heat_data <- function(target) {
 
 
 plot_heat_big <- function(df) {
+    cat("Making heatmap\n")
     ggp <- ggplot(df, aes(x=x, y=y, fill=Z)) +
         geom_raster() +
         scale_fill_gradient(low="white", high="black", name="Z-score") +
@@ -375,6 +376,8 @@ plot_heat_big <- function(df) {
 
 
 plot_heat_small <- function(df) {
+    df <- df %>% dplyr::group_by(herv_cl, pheno) %>%
+        dplyr::summarise(Z=median(Z), n=n())
     ggp <- ggplot(df, aes(x=pheno, y=herv_cl, fill=Z)) +
         geom_tile() +
         scale_fill_gradient(low="white", high="black", name="Z-score") +
@@ -385,14 +388,14 @@ plot_heat_small <- function(df) {
 
 
 write_heat <- function(plotlist, target) {
-    p_width <- 9
-    p_height <- 4
+    p_width <- 7
+    p_height <- 3.5
     fig <- cowplot::plot_grid(
         plotlist=plotlist,
         nrow=1,
         ncol=2,
         labels=c("A", "B"),
-        rel_widths=c(1, 0.8)
+        rel_widths=c(1, 0.6)
     )
     pdf(file=target, width=p_width, height=p_height)
     print(fig)

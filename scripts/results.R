@@ -68,10 +68,10 @@ herv_element_summary <- function() {
     hrvnums <- count_herv_ids(gtf, ids)
     target <- paste0(Sys.getenv("rdata_dir"), "dge_", cohort, ".Rda")
     dgeobj <- load_dgeobj(target)
-    hrvnums[["Expressed HERV Genes"]] <- sum(grepl("HERV", rownames(dgeobj$dds)))
+    hrvnums[["Expressed HERV Loci"]] <- sum(grepl("HERV", rownames(dgeobj$dds)))
     hrvnames <- rownames(dgeobj$dds)[grepl("HERV", rownames(dgeobj$dds))]
     hrvcats <- count_herv_cats(hrvnames)
-    sumlist <- setNames(list(hrvnums, hrvcats), c("HERV Genes", "HERV Classes"))
+    sumlist <- setNames(list(hrvnums, hrvcats), c("HERV Loci", "HERV Classes"))
     pl <- plot_hrvsum(sumlist)
     target_dir <- Sys.getenv("plot_dir")
     check_dir(target_dir)
