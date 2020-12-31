@@ -5,7 +5,7 @@ plot_cor_select <- function(plotlist) {
     cwp <- cowplot::plot_grid(
         plotlist[["TUMvHLT"]], plotlist[["TUMvNAT"]],
         nrow=1, ncol=2,
-        labels=c("A", "B")
+        labels=c("a", "b")
     )
     return(cwp)
 }
@@ -15,7 +15,7 @@ plot_cor_val_select <- function(plotlist) {
     cwp <- cowplot::plot_grid(
         plotlist[[1]], plotlist[[2]],
         nrow=1, ncol=2,
-        labels=c("C", "D")
+        labels=c("c", "d")
     )
     return(cwp)
 }
@@ -147,7 +147,7 @@ write_prelim_expr <- function(plotlist, target) {
         plotlist=plotlist,
         nrow=2,
         ncol=2,
-        labels=c("A", "B", "C", "D")
+        labels=c("a", "b", "c", "d")
     )
     pdf(file=target, width=p_width, height=p_height)
     print(fig)
@@ -186,7 +186,7 @@ plot_volcano_select <- function(plotlist, target) {
         plotlist[["TUMvHLT"]], plotlist[["TUMvNAT"]],
         nrow=1,
         ncol=2,
-        labels=c("A", "B")
+        labels=c("a", "b")
     )
     return(cwp)
 }
@@ -197,7 +197,7 @@ plot_counts_select <- function(plotlist, target) {
         plotlist=plotlist,
         nrow=2,
         ncol=1,
-        labels=c("C", NULL)
+        labels=c("c", NULL)
     )
     return(cwp)
 }
