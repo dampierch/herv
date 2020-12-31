@@ -1,20 +1,22 @@
 \begin{table}[ht]
+    \small
     \centering
-    \begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|}
-    \hline
-        Independent Cohort \#2 &  &  &  &  &  &  &  &  &  &  &  \\ \hline
-         &  &  &  &  &  &  &  &  &  &  &  \\ \hline
-        Source & Dataset name & \# samples &  &  &  & Sex (\% female) &  &  & Age (mean, sd) &  &  \\ \hline
-         &  & HLT & NAT & TUM & Total & HLT & NAT* & TUM* & HLT & NAT* & TUM* \\ \hline
-        GDC & TCGA-COAD & -- & 3 & 3 & 6 & -- & 50.0\% & 50.0\% & -- & 62.2, 13.4 & 62.2, 13.4 \\ \hline
-        GDC & TCGA-READ & -- & 1 & 1 & 2 & -- & 0.0\% & 0.0\% & -- & 50.0, -- & 50.0, -- \\ \hline
-        SRA & HebeiMU & -- & 1 & 1 & 2 & -- & 0.0\% & 0.0\% & -- & NR & NR \\ \hline
-        SRA & KoreaAMC & -- & 4 & 4 & 8 & -- & NR & NR & -- & NR & NR \\ \hline
-        SRA & KoreaPNU & -- & 2 & 2 & 4 & -- & 50.0\% & 50.0\% & -- & 74.0, 1.2 & 74.0, 1.2 \\ \hline
-        SRA & Mayo & -- & 4 & 4 & 8 & -- & 50.0\% & 50.0\% & -- & 70.3, 9.7 & 70.3, 9.7 \\ \hline
-        Total &  & -- & 15 & 15 & 30 & -- & 36.4\% & 36.4\% & -- & 66.6, 11.6 & 66.6, 11.6 \\ \hline
-        * missing data on subset of samples; NR signifies not reported &  &  &  &  &  &  &  &  &  &  &  \\ \hline
-    \end{tabular}
-    \caption{Supplementary Table 2}
+    \caption{Phenotypic and demographic characteristics of independent cohort \#2}
     \label{tab:ind2}
+    \begin{tabular}{ll|llll|lll|lll}
+        \textbf{Source} & \textbf{Dataset} & \multicolumn{4}{l|}{\textbf{\# samples}} & \multicolumn{3}{l|}{\textbf{Sex (\% female)}} & \multicolumn{3}{l}{\textbf{Age (mean, sd)}} \\
+        \cline{3-12}
+         & & HLT & NAT & TUM & Total & HLT & NAT* & TUM* & HLT & NAT* & TUM* \\
+        \hline
+        GDC & TCGA-COAD & -- & 3 & 3 & 6 & -- & 50 & 50 & -- & 62, 13 & 62, 13 \\
+        GDC & TCGA-READ & -- & 1 & 1 & 2 & -- & 0 & 0 & -- & 50, -- & 50, -- \\
+        SRA & HebeiMU & -- & 1 & 1 & 2 & -- & 0 & 0 & -- & \emph{NR} & \emph{NR} \\
+        SRA & KoreaAMC & -- & 4 & 4 & 8 & -- & \emph{NR} & \emph{NR} & -- & \emph{NR} & \emph{NR} \\
+        SRA & KoreaPNU & -- & 2 & 2 & 4 & -- & 50 & 50 & -- & 74, 1 & 74, 1 \\
+        SRA & Mayo & -- & 4 & 4 & 8 & -- & 50 & 50 & -- & 70, 10 & 70, 10 \\
+        \hline
+        Total &  & -- & 15 & 15 & 30 & -- & 36\% & 36\% & -- & 67, 12 & 67, 12 \\
+        \hline
+        \multicolumn{12}{l}{* missing data on subset of samples; \emph{NR} signifies not reported} \\
+    \end{tabular}
 \end{table}
