@@ -166,7 +166,7 @@ fig_prelim_expr <- function() {
     hrvnums <- run_hrvnums2(l$hervs, l$ddsobj, l$dgeobj)
     hrvnames <- rownames(l$dgeobj$adj)[grepl("HERV", rownames(l$dgeobj$adj))]
     hrvcats <- count_herv_cats(hrvnames)
-    sumlist <- setNames(list(hrvnums, hrvcats), c("HERV Loci", "HERV Classes"))
+    sumlist <- setNames(list(hrvnums, hrvcats), c("HERV Loci", "HERV Groups"))
     pl <- plot_hrvsum(sumlist)
     pl[[1]] <- pl[[1]] +
         labs(title="HERV Elements Studied") +
@@ -376,6 +376,7 @@ plot_heat_big <- function(df) {
 
 
 plot_heat_small <- function(df) {
+    ## this turned out to be too problematic to interpret and is deprectated
     df <- df %>% dplyr::group_by(herv_cl, pheno) %>%
         dplyr::summarise(Z=median(Z), n=n())
     ggp <- ggplot(df, aes(x=pheno, y=herv_cl, fill=Z)) +
@@ -388,14 +389,15 @@ plot_heat_small <- function(df) {
 
 
 write_heat <- function(plotlist, target) {
-    p_width <- 7
-    p_height <- 3.5
+    p_width <- 6   ## 7 for A,B
+    p_height <- 3  ## 3.5 for A,B
     fig <- cowplot::plot_grid(
         plotlist=plotlist,
         nrow=1,
-        ncol=2,
-        labels=c("A", "B"),
-        rel_widths=c(1, 0.6)
+        ncol=1,
+        # labels=c("A", "B"),
+        labels=c(NULL)
+        # rel_widths=c(1, 0.6)
     )
     pdf(file=target, width=p_width, height=p_height)
     print(fig)

@@ -1,0 +1,25 @@
+\subsection*{Latent factor analysis}
+To estimate the confounding influences of latent factors, including demographic variables with missing data, surrogate variable analysis was performed using the \emph{sva} package \citep{sva}.
+First, the number of significant latent factors was estimated with the \verb|num.sv| function.
+For this estimation, the Buja Eyuboglu method was used because it estimated a lower, more tractable number of latent factors.
+The estimation was performed using a full model with two terms, one for the intercept and one for tissue phenotype.
+Second, the latent factors (i.e. surrogate variables) themselves were estimated with the \verb|svaseq| function.
+For this estimation, the same full model with intercept and phenotype terms was used, and the null model was set to include an intercept term alone.
+The surrogate variables returned from this process included latent factors affecting every sample and were included as variables in the sample annotation matrix along with tissue phenotype.
+
+\subsection*{Data vizualization}
+Results of high dimensional data analysis were displayed in figures generated with the \emph{ggplot2} package \citep{Wickham2016}.
+Multipanel figures were assembled using the \emph{cowplot} package \cite{Wilke2020}.
+
+Expression levels used for vizualization were based on normalized, transformed, and adjusted counts.
+Normalization was performed with the \emph{DESeq2} package \citep{Love2014} using the \verb|estimateSizeFactors| and then \verb|counts| functions.
+The \verb|counts| function was used with the \verb|normalized| argument set to TRUE.
+Transformation was performed with \emph{DESeq2} using the variance stabilizing transformation on normalized counts.
+The variance stabilizing transformation includes a log2 transformation.
+Finally, adjustment of normalized and transformed counts for latent factors was performed with \emph{limma} using the \verb|remoteBatchEffect| function.
+The normalized, transformed, and adjusted counts were used in histograms to represent expression levels of GENCODE genes and HERV loci.
+These counts were also overlaid atop boxplots to represent expression levels of tumor specific HERV loci.
+Lastly, the same counts were used to calculate Z-scores to represent expression levels of all HERV loci tested.
+
+Effect sizes (i.e. $log2(fold change)$) used for vizualization of correlations between different analyses were calculated by \emph{DESeq2} regression models and used without shrinkage.
+Effect sizes used for volcano plots (i.e. scatter plots of $log2(fold change)$ versus $-log10(\emph{P})$) were shrunken with the \emph{ashr} package \citep{Stephens2020}.

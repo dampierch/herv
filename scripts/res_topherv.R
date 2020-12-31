@@ -62,9 +62,9 @@ format_counts <- function(tophervs, dgeobj) {
 
 plot_counts <- function(dfs) {
     cat("Making box plots\n")
-    color_values <- c("blue", "grey", "red")
-    ggp_title <- "Expression Levels of Select HERV Loci"
-    ggp_ylab <- "Scaled Counts"
+    # color_values <- c("blue", "grey", "red")
+    ggp_title <- "Tumor Specific HERV Loci"
+    ggp_ylab <- "Expression Level"
     lidx <- 0
     pl <- list()
     for (df in dfs) {
@@ -73,7 +73,8 @@ plot_counts <- function(dfs) {
             geom_boxplot(outlier.size=-1, position=position_dodge2()) +
             geom_point(size=0.25, alpha=0.5, position=position_jitterdodge()) +
             labs(title=ggp_title, x=element_blank(), y=ggp_ylab) +
-            scale_colour_manual(values=color_values) +
+            # scale_colour_manual(values=color_values) +
+            scale_colour_grey(start=0.8, end=0.2) +
             ggp_theme_box
         if (cohort == "A" & length(levels(df$herv_id)) < 6) {
             ggp <- ggp +

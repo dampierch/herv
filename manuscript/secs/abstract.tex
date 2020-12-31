@@ -1,20 +1,23 @@
 \textbf{Background}:
-Identification of novel genomic features with potential utility as biomarkers or targets for detection and treatment of colorectal cancer is a priority of cancer researchers.
-Markers and targets for immune modulation are of particular relevance given the emergence of immune checkpoint inhibition as an effective treatment for advanced CRC.
-
-Microsatellite unstable, mismatch repair deficient metastatic cancers can be treated with immune checkpoint inhibitors, but new therapeutic approaches are needed to extend the benefits of immune modulators to the majority of patients with microsatellite stable tumors.
-Cancer specific over expression of human endogenous retroviral elements could be exploited to enhance immune infiltration of microsatellite stable colorectal cancer and render these tumors more susceptible to immune checkpoint inhibition.
-To identify novel targets for immune mediated cancer therapies, we tested for cancer specific over expression of endogenous retroviral transcripts in a large cohort of colorectal transcriptomes.
+Colorectal cancer is the second leading cause of cancer death in the United States.
+Identification of novel genomic features with potential utility as diagnostic or prognostic biomarkers or therapeutic targets could help improve detection and treatment of patients with colorectal cancer.
+Features associated with immune modulation are of particular relevance given the emergence of immune checkpoint inhibition as an effective treatment for advanced disease.
+Endogenous retroviral elements expressed in tumors could be exploited for diagnostic or therapeutic use.
+To identify novel markers and targets for immune mediated cancer therapies, we tested for cancer specific over expression of non-canonical endogenous retroviral transcripts in a large cohort of colorectal transcriptomes.
 
 \textbf{Methods}:
-A recently curated RNA sequencing dataset composed of 1,139 human primary colorectal tissue samples divided into three cohorts was re-processed using a novel annotation of repeat element transcripts to quantify levels of repeat element expression in colorectal transcriptomes.
-A total of NUMBER healthy, NUMBER tumor-adjacent normal, and NUMBER tumor samples were profiled with short read sequencing.
-Transcripts were quantified with Salmon using the GENCODE v36 transcriptome augmented to include unannotated exons from long terminal repeat elements classified as human endogenous retroviruses (HERVs) in the Dfam database.
-Associations between transcript expression and tissue phenotype were tested using DESeq2 in the R statistical language.
+A curated RNA sequencing dataset composed of 1,139 human primary colorectal tissue samples divided into three independent cohorts was re-processed using a novel annotation of repeat element transcripts to quantify levels of human endogenous retroviral mRNA in colorectal transcriptomes.
+A total of 474 healthy, 133 tumor adjacent normal, and 532 tumor samples were profiled with short read sequencing.
+Transcripts were quantified with Salmon using the GENCODE v36 transcriptome augmented to include unannotated exons from long terminal repeat elements classified as human endogenous retroviruses in the Dfam database.
+Associations between transcript expression and tissue phenotype were tested using \emph{DESeq2} in the R statistical programming language.
 
 \textbf{Results}:
-Out of 5,025 unannotated HERV genes measured in 834 samples, including NUMBER healthy, NUMBER tumor-adjacent normal, and NUMBER tumor samples, 150 were expressed within one standard deviation of median protein coding gene expression in at least one tissue phenotype.
-Over half of the 150 HERV genes with moderate expression were in the H (26) or K (51) classes.
-Tumor specific over expression was observed in 11 of the 150 HERV genes tested.
+Out of 5,025 unannotated proviral loci queried in our discovery analysis, 150 were expressed within one standard deviation of median protein coding gene expression in at least one tissue phenotype.
+Over half of the 150 loci were from two groups of endogenous retrovirus (51 from K, 26 from H).
+Tumor specific over expression was observed in 11 of the 150 loci tested (\emph{P} adjusted < 0.05), and seven were validated in an independent cohort.
+Widespread proviral expression was also found in healthy tissues.
 
-\textbf{Conclusions}: The conclusions go here.
+\textbf{Conclusions}:
+In the largest unbiased assessment of non-canonical human endogenous retroviral transcript expression in colorectal transcriptomes, we found relatively few loci expressed at levels similar to canonical protein coding genes.
+Nevertheless, we identified seven proviruses with tumor specific expression patterns.
+These proviruses have potential as novel biomarkers or immunotargets and should be prioritized in future investigations.

@@ -317,7 +317,7 @@ rule results:
     shell:
         '''
         source {input.cfg}
-        sbatch --output=results_{params.cohort}_v2.{params.validate}.out \
+        sbatch --output=results_{params.cohort}_v3.{params.validate}.out \
             {input.sh} \
             {params.cohort} \
             {params.validate}

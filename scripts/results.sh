@@ -3,7 +3,7 @@
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=05000
+#SBATCH --mem=10000
 #SBATCH --time=00:30:00
 #SBATCH --partition=standard
 #SBATCH --account=chd5n_alloc
@@ -14,7 +14,7 @@
 ## -- for use in snakemake workflow
 ## -- usage: snakemake results
 
-## -- perform: 1-2m, 3.4GB for cohort A
+## -- perform: 1-2m, >4GB for cohort A
 
 
 script_name=results.sh

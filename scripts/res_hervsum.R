@@ -54,7 +54,7 @@ fill_params <- function(l, params) {
         params[["ggp_sub"]] <- paste("From", n, "starting transcripts")
         l <- l[names(l) != "Total Transcripts"]
     } else {
-        params[["ggp_title"]] <- "Classes of HERV Loci Tested"
+        params[["ggp_title"]] <- "Groups of HERV Loci Tested"
         params[["ggp_sub"]] <- element_blank()
     }
     params[["ggp_ylab"]] <- "Counts"

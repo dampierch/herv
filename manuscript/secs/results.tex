@@ -1,10 +1,10 @@
-\subsection*{Identification of human endogenous retroviral transcripts in colorectal transcriptomes}
+\subsection*{Identification of non-canonical human endogenous retroviral transcripts in colorectal transcriptomes}
 To define an inclusive set of non-canonical, transcribed HERV elements against which to compare human colorectal transcriptomes, we started with a recently published model of the human cancer transcriptome assembled \emph{de novo} from TCGA samples and annotated with RepeatMasker using the Dfam database \citep{Attig2019}.
 The complete annotation included over 1 million transcripts, 416,862 of which overlapped long terminal repeat sequences (i.e. the repeat sequences that flank HERV proviruses).
 We aimed to discover expression of novel, cancer-specific HERV sequences, so we selected a subset of transcripts composed of exons without GENCODE annotations, at least one of which was classifed as a HERV element.
 There were 16,336 transcripts from 5,025 unique HERV loci that met our criteria (Figure \ref{fig:pre_sum}A).
 
-To estimate gene and proviral abundance in colorectal tissue, RNA-seq reads from a discovery cohort of 834 colorectal samples were quasi-mapped to a reference transcriptome composed of GENCODE annotated transcripts combined with the selected 16,336 unannotated HERV transcripts (see Methods).
+To estimate gene and proviral abundance in colorectal tissue, RNA-seq reads from a discovery cohort of 833 colorectal samples were quasi-mapped to a reference transcriptome composed of GENCODE annotated transcripts combined with the selected 16,336 unannotated HERV transcripts (see Methods).
 Phenotypic and demographic characteristics of the discovery cohort are presented in Table \ref{tab:discovery}.
 Healthy tissue donors were younger, on average, than donors of tumor and tumor adjacent specimens.
 Transcript abundance estimates were aggregated into gene abundances for transcripts with GENCODE annotations and into locus abundances for HERV transcripts.
@@ -12,10 +12,10 @@ We found 1,513 unique HERV loci with at least a single read detected in at least
 These 1,513 proviruses tended to have lower expression compared to levels of mRNA from canonical protein coding genes.
 This trend was observed when all tissue phenotypes were aggregated and when tumor samples were considered separately (Figure \ref{fig:pre_sum}C,D).
 
-To identify HERV proviruses more likely to succeed as biomarkers and function like protein coding genes, we filtered proviruses by expression level relative to GENCODE protein coding genes.
+To identify HERV proviruses with potential to function as protein coding genes and succeed as biomarkers or immunotargets, we filtered HERV loci by expression level relative to GENCODE protein coding genes.
 Of the 1,513 unique loci detected, 150 were expressed at levels within one standard deviation of the median of canonical protein coding genes (Figure \ref{fig:pre_sum}A).
 These 150 moderately expressed proviruses were retained for association testing along with GENCODE protein coding genes.
-Approximately half were from HERV class K or H (Figure \ref{fig:pre_sum}B).
+Approximately half were from HERV group K or H (Figure \ref{fig:pre_sum}B).
 
 \subsection*{Proviruses associated with colorectal cancer}
 To test our hypothesis that HERV proviral elements would be preferentially transcribed in tumor samples compared to healthy and tumor adjacent samples, we regressed gene and proviral counts on tissue phenotype.
@@ -26,12 +26,12 @@ Without knowledge of whether HERV transcripts are likely to be affected by the t
 Out of 150 HERV loci tested, 28 were over-expressed in tumor samples relative to healthy samples, and 14 were over-expressed in tumor samples relative to tumor adjacent samples (\emph{P} adjusted < 0.05) (Figure \ref{fig:dge_res}A,B, red points).
 The larger number of over-expressed genes in the comparison with healthy tissue could be consistent with field effect bias but could also be due to a larger healthy tissue sample size and concomitant increased statistical power.
 We did not investigate this point further because the intersection of the tumor specific proviruses from both comparisons yielded 11 HERV loci clearly unaffected by field effect bias and expressed in a tumor specific pattern (Figure \ref{fig:dge_res}C).
-These 11 HERVs could serve as novel tumor biomarkers or as templates for translation of proteins to which immune tolerance may not have developed, so we sought to validate their tumor specificity in an independent cohort.
+These 11 HERVs could serve as novel tumor biomarkers or as templates for translation of immunogenic peptides, so we sought to validate their tumor specificity in an independent cohort.
 
-To verify the consistency of associations between proviral expression and tissue phenotype, we applied the same methods used in the discovery cohort to an independent cohort (cohort \#1) of 275 colorectal samples composed of 12 healthy, 56 tumor adjacent, and 207 tumor samples (Supplementary Table 1).
+To verify the consistency of associations between proviral expression and tissue phenotype, we applied the same methods used in the discovery cohort to an independent cohort (cohort \#1) of 276 colorectal samples composed of 12 healthy, 56 tumor adjacent, and 208 tumor samples (Supplementary Table 1).
 Of the 150 HERVs moderately expressed (i.e. expressed within a standard deviation of median protein coding expression) in the discovery cohort, 92 were also moderately expressed in the independent cohort.
 Estimates of relative expression between healthy and tumor samples were similar for the 92 HERVs tested in both cohorts despite the small number of healthy samples in the independent cohort (Supplementary Figure 1C).
-Nominally significant (i.e. \emph{P} < 0.05) tumor over expression relative to either healthy or tumor adjacent samples was considered for the purpose of validation due to the small number of healthy samples.
+Nominally significant (i.e. \emph{P} < 0.05) tumor over-expression relative to either healthy or tumor adjacent samples was considered for the purpose of validation due to the small number of healthy samples.
 Seven of the 11 tumor specific HERVs identified in the discovery cohort were validated in the independent cohort (Table \ref{tab:val}).
 
 To verify accuracy of bioinformatic and statistical methods, two additional validations were performed.
@@ -44,7 +44,7 @@ Testing in the discovery cohort relied on latent factor analysis to adjust for c
 An alternative approach is to compare pairs of samples matched by subject.
 This approach eliminates the possibility of comparisons between healthy and affected tissue but is expected to control for differences in age, sex, race, and other possible confounders more effectively.
 Consistency of relative proviral expression between phenotypes in the discovery cohort and a second independent cohort (cohort \#2) of 15 tumor and 15 adjacent normal pairs was tested (see Supplementary Table 2 for cohort characteristics).
-Only 48 HERV loci were tested in both cohorts, but estimates of their relative expression in tumor adjacent and tumor samples was highly concordant (Pearson \emph{R} = 0.93) (Supplementary Figure 1).
+Only 48 HERV loci were moderately expressed in both cohorts, but estimates of their relative expression in tumor adjacent and tumor samples was highly concordant (Pearson \emph{R} = 0.93) (Supplementary Figure 1).
 The high concordance of estimates indicated the latent factor analysis employed in the discovery cohort adequately controlled the effect of confounders.
 
 %% TO DO
@@ -63,6 +63,8 @@ A high number of differentially expressed genes with over expression in healthy 
 To demonstrate the frequency with which healthy samples harbored relatively high proviral expression levels and to qualitatively assess whether particular groups of HERVs had different expression patterns across phenotypes, we computed standardized expression levels (i.e. Z-scores) for all samples in the discovery cohort and plotted them in a heatmap (Figure \ref{fig:heat}).
 The darker shade of the healthy panels indicated higher expression levels of most HERVs across all groups.
 Subsets of HERV loci from each group demonstrated higher expression in tumors, but these were exceptions.
-To verify this result, we tested for differential expression in the discovery cohort using an alternative HERV transcriptome recently compiled by manual curation of published HERV sequences \citep{Grabski2020}.
-The alternative transcriptome included 91 HERV-K (HML-2) sequences.
-All but one of the six differentially expressed HERV transcripts were higher in healthy samples, indicating our finding was not due to our definition of HERVs (Supplementary Figure 2).
+
+To verify this surprising result, we tested for differential expression in the discovery cohort using an alternative HERV transcriptome recently compiled by manual curation of published but nevertheless poorly annotated HERV-K (HML-2) sequences \citep{Grabski2020}.
+The alternative transcriptome included 91 proviruses.
+A total of six were differentially expressed between healthy and tumor samples (\emph{P} adjusted < 0.05).
+All but one of the six were higher in healthy samples, indicating healthy specific over expression was not an artifact of our customized HERV transcriptome (Supplementary Figure 2).

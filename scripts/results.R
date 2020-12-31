@@ -72,7 +72,7 @@ herv_element_summary <- function() {
     hrvnums[["Expressed HERV Loci"]] <- sum(grepl("HERV", rownames(dgeobj$dds)))
     hrvnames <- rownames(dgeobj$dds)[grepl("HERV", rownames(dgeobj$dds))]
     hrvcats <- count_herv_cats(hrvnames)
-    sumlist <- setNames(list(hrvnums, hrvcats), c("HERV Loci", "HERV Classes"))
+    sumlist <- setNames(list(hrvnums, hrvcats), c("HERV Loci", "HERV Groups"))
     pl <- plot_hrvsum(sumlist)
     target_dir <- Sys.getenv("plot_dir")
     check_dir(target_dir)
@@ -152,17 +152,8 @@ validation_tests <- function() {
 }
 
 
-if (validate == 1) {
-    l2 <- validation_tests()
-    print(l2)
-} else {
-    main()
-}
-
-
-### DEVS
-
 make_figures <- function() {
+    cat("Making figures for manuscript\n")
     fig <- list()
     fig[[1]] <- fig_supp_cor_field_val()
     fig[[2]] <- fig_prelim_expr()
@@ -170,4 +161,17 @@ make_figures <- function() {
     fig[[4]] <- fig_heat()
 }
 
-make_figures()
+
+if (validate == 1) {
+    l2 <- validation_tests()
+    print(l2)
+    make_figures()
+} else {
+    main()
+}
+
+
+### DEVS
+devs <- function() {
+    ## currently nothing under development
+}
