@@ -1,4 +1,7 @@
-## this script is experimental
+## this script is meant to be run from snakemake pipeline
+## it will compile a complete pdf including figures, tables, and refs
+## it will also compile a rough docx file for sharing with collaborators
+## sample useage: snakemake manuscript
 
 fig1=$1
 fig2=$2
@@ -21,7 +24,8 @@ cp $spt1 ../manuscript/tabs/spt1.tex
 cp $spt2 ../manuscript/tabs/spt2.tex
 
 printf '%s' "Adding texlive to \$PATH\n"
-export PATH=$PATH:/home/chd5n/apps/texlive/2020/bin/x86_64-linux
+export PATH=$PATH:/home/chd5n/apps/texlive/2020/bin/x86_64-linux; xelatex -v
+export PATH=$PATH:/home/chd5n/apps/pandoc-2.10/bin; pandoc -v
 
 cd ../manuscript/
 rm main.{aux,bbl,blg,log,pdf}
@@ -38,3 +42,5 @@ xelatex supp
 bibtex supp
 xelatex supp
 xelatex supp
+
+pandoc --standalone --output=docx/main.docx --from=latex --to=docx main.tex
