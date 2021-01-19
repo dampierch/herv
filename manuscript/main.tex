@@ -135,6 +135,16 @@
 
 \end{document}
 
-problems with AMA style file
-https://tex.stackexchange.com/questions/55020/updated-ama-bst-file
-i modified vancouver.bst to get proper author lists
+%% citation issues
+- problems with AMA style file
+- https://tex.stackexchange.com/questions/55020/updated-ama-bst-file
+- i modified vancouver.bst to get proper author lists > myvancouver.bst
+- pandoc conversion to docx requires csl
+- wget -O ama.csl https://github.com/citation-style-language/styles/blob/master/american-medical-association.csl?raw=true
+
+%% word format issues
+- see https://pandoc.org/MANUAL.html, --reference-doc= for DOCX
+- To produce a custom reference.docx, first get a copy of the default reference.docx:
+pandoc --print-default-data-file reference.docx > custom-reference.docx
+Then open custom-reference.docx in Word, modify the styles as you wish, and save the file.
+Modified: Normal, Abstract, Author, Title, Subtitle, Heading 1, Heading 2, Bibliography, Body Text, First Paragraph, Verbatim Char

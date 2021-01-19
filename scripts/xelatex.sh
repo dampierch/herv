@@ -43,4 +43,12 @@ bibtex supp
 xelatex supp
 xelatex supp
 
-pandoc --standalone --output=docx/main.docx --from=latex --to=docx main.tex
+pandoc \
+    --standalone \
+    --from=latex \
+    --to=docx \
+    --reference-doc=docx/custom-reference.docx \
+    --bibliography=main.bib \
+    --csl=ama.csl \
+    --output=docx/main.docx \
+    main.tex
