@@ -101,13 +101,13 @@ prep_charac_im2 <- function(herv_ids, markers, df, hid) {
 
 plot_charac_im <- function(df, herv_levels, hid=NULL) {
     if ("gene_name" %in% colnames(df)) {
-        ggp_title <- paste("HERV", hid, "and CD8+ Markers")
+        ggp_title <- paste("HERV", hid, "and Cytotoxic Activity")
         nrow <- 2
         ggp_theme_charac <- ggp_theme_charac +
             theme(strip.text=element_text(colour="white", face="italic"))
     } else {
         df$group <- factor(df$group, levels=herv_levels)
-        ggp_title <- "HERVs and CD8+ Index"
+        ggp_title <- "HERVs and Cytotoxic Activity Index"
         nrow <- 4
     }
     ggp_ylab <- "Marker Expression"

@@ -295,7 +295,7 @@ rule results:
     study the cohorts are referred to as discovery, ind #2, and ind #1,
     respectively
 
-    note: validate is an integer boolean; 0 = FALSE, 1 = TRUE
+    note: validate takes [0,1,2]; 0 = none, 1 = validation, 2 = characterization
     '''
     input:
         cfg = ancient('config.sh'),
@@ -305,7 +305,7 @@ rule results:
         cohort = 'A',
         # cohort = 'B',
         # cohort = 'C',
-        validate = 1
+        validate = 2
     output:
         # '/scratch/chd5n/herv/results/plots/herv-field-cor_A.pdf',
         # '/scratch/chd5n/herv/results/plots/herv-element-sum_A.pdf',
@@ -320,7 +320,7 @@ rule results:
     shell:
         '''
         source {input.cfg}
-        sbatch --output=results_{params.cohort}_v3.{params.validate}.out \
+        sbatch --output=results_{params.cohort}_v4.{params.validate}.out \
             {input.sh} \
             {params.cohort} \
             {params.validate}
@@ -354,12 +354,11 @@ rule manuscript:
         tab2 = '/scratch/chd5n/herv/results/tables/herv-val-table.tex',
         spf1 = '/scratch/chd5n/herv/results/plots/herv-cor-select.pdf',
         spf2 = '/scratch/chd5n/herv/results/plots/herv-roc_A.pdf',
-        spf3 = '/scratch/chd5n/herv/results/plots/herv-roc_C.pdf',
-        spf4 = '/scratch/chd5n/herv/results/plots/herv-roc_B.pdf',
-        spf5 = '/scratch/chd5n/herv/results/plots/herv-age_A.pdf',
-        spf6 = '/scratch/chd5n/herv/results/plots/herv-msi_stage_A.pdf',
-        spf7 = '/scratch/chd5n/herv/results/plots/herv-im_A.pdf',
-        spf8 = '/scratch/chd5n/meta/herv/metaPhenoPeUqSampIndSmpAllGeDesResLfcHervExp.pdf',
+        spf3 = '/scratch/chd5n/herv/results/plots/herv-age_A.pdf',
+        spf4 = '/scratch/chd5n/herv/results/plots/herv-msi_stage_A.pdf',
+        spf5 = '/scratch/chd5n/herv/results/plots/herv-im_A.pdf',
+        spf6 = '/scratch/chd5n/herv/results/plots/herv-roc_C.pdf',
+        spf7 = '/scratch/chd5n/meta/herv/metaPhenoPeUqSampIndSmpAllGeDesResLfcHervExp.pdf',
         spt1 = '../manuscript/tabs/tab_ind1.tex',
         spt2 = '../manuscript/tabs/tab_ind2.tex',
         sh = 'xelatex.sh'
@@ -371,6 +370,6 @@ rule manuscript:
             {input.fig1} {input.fig2} {input.fig3} \
             {input.tab1} {input.tab2} \
             {input.spf1} {input.spf2} {input.spf3} {input.spf4} {input.spf5} \
-            {input.spf6} {input.spf7} {input.spf8} \
+            {input.spf6} {input.spf7} \
             {input.spt1} {input.spt2}
         '''

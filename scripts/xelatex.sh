@@ -15,7 +15,6 @@ spf4=$9
 spf5=${10}
 spf6=${11}
 spf7=${12}
-spf8=${13}
 spt1=${14}
 spt2=${15}
 
@@ -31,7 +30,6 @@ cp $spf4 ../manuscript/figs/spf4.pdf
 cp $spf5 ../manuscript/figs/spf5.pdf
 cp $spf6 ../manuscript/figs/spf6.pdf
 cp $spf7 ../manuscript/figs/spf7.pdf
-cp $spf8 ../manuscript/figs/spf8.pdf
 cp $spt1 ../manuscript/tabs/spt1.tex
 cp $spt2 ../manuscript/tabs/spt2.tex
 

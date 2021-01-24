@@ -1,25 +1,64 @@
+\subsection*{Bioinformatic processing of RNA-seq reads}
+RNA-seq reads for all samples were stored and analyzed in FASTQ format.
+Reads from the Genomic Data Commons were downloaded in BAM files that included unaligned reads.
+All reads downloaded in BAM format were converted to FASTQ using Biobambam2 v2.0.87 \citep{Tischler2014}.
+
+\subsection*{Selection of unannotated HERV loci}
+Previously unannotated HERV transcripts were selected as follows.
+A complete gene transfer format (GTF) \citep{GTF} annotation of a repeat element inclusive cancer transcriptome was downloaded from Attig et al. (2019) \citep{Attig2019}.
+The annotation was parsed with a custom Python script to produce a new annotation in BED12 \citep{BED12} format.
+Transcripts were selected based on three criteria: i) at least partial overlap with a long terminal repeat element, ii) classification of at least one interval as HERV derived, and iii) absence of any interval overlapping an annotated GENCODE gene.
+All transcripts labeled with the same repeat element identifier (i.e. repeat element group along with genomic coordinates) were considered isoforms of the same HERV locus.
+Genomic coordinates were extracted for all constituent parts (labeled as exons in the GTF) of selected transcripts to permit inference of splice sites and exclusion of intervening untranscribed sequences.
+Note that we avoid use of the terms \emph{exon} and \emph{intron} in the context of HERV transcripts because the terminology is ambiguous for HERV genomes.
+For display purposes, repeat element identifier genomic coordinates were converted to cytobands based on the cytoBand table downloaded from the UCSC Genome Browser \citep{Furey2003, Navarro2020}.
+
+\subsection*{Creation of custom Salmon index}
+To create the Salmon index, a custom reference transcriptome was built from a list of GENCODE v34 transcript sequences \citep{Frankish2018} and the list of selected HERV transcript sequences.
+GENCODE sequences were downloaded from the GENCODE FTP site \citep{GENCODE-transcripts}.
+HERV sequences were extracted from the GRCh38 reference genome \citep{ENCODE-GRCh38} using the BEDTools \verb|getfasta| command \citep{Quinlan2010} with the \verb|-split| option and the custom BED12 annotation of selected HERV transcripts mentioned above.
+Following recommendations from the authors of Salmon \citep{SalmonDecoys}, contig sequences from the GRCh38 reference genome were subsequently added to the target transcript sequences as decoy sequences to generate a decoy-aware transcriptome for indexing.
+
+\subsection*{Expression analysis}
+To analyze HERV locus expression using \emph{Bioconductor} \citep{bioc}, \emph{tximport} \citep{Soneson2015} was used to extract transcript length and abundance estimates from Salmon output and summarize them by HERV locus and GENCODE gene for input into \emph{DESeq2} \citep{Love2014}.
+Count matrices of HERV loci and GENCODE genes were prefiltered to select loci and genes with a count of at least one read in at least half of samples in each cohort.
+Factors to normalize counts for sequencing depth and transcript length were calculated with \emph{DESeq2}.
+Latent factors of non-biological variation were estimated with \emph{sva} \citep{sva} as described below.
+Loci and genes of interest for association testing were selected in several steps.
+
+First, counts of all loci and genes were transformed with the variance stabilizing transformation of \emph{DESeq2} and adjusted for batch effects with \emph{limma} \citep{Ritchie2015}.
+Second, adjusted counts of all annotated genes were filtered to retain only protein coding genes.
+Third, the median and standard deviation of protein coding gene expression were calculated separately for each tissue phenotype in each cohort.
+Finally, adjusted counts of HERV loci were filtered to retain only HERVs expressed within a single standard deviation of median protein coding gene expression in at least one tissue phenotype.
+
 \subsection*{Latent factor analysis}
-To estimate the confounding influences of latent factors, including demographic variables with missing data, surrogate variable analysis was performed using the \emph{sva} package \citep{sva}.
+To estimate the confounding effects of latent factors in the cohorts of independent subjects (i.e. the discovery cohort and independent cohort \#1), surrogate variable analysis was performed using the \emph{sva} package \citep{sva}.
 First, the number of significant latent factors was estimated with the \verb|num.sv| function.
-For this estimation, the Buja Eyuboglu method was used because it estimated a lower, more tractable number of latent factors.
+For this estimation, the Buja Eyuboglu method was used because it estimated a lower, more tractable number of latent factors (i.e. three latent factors each for both the discovery cohort and independent cohort \#1).
 The estimation was performed using a full model with two terms, one for the intercept and one for tissue phenotype.
 Second, the latent factors (i.e. surrogate variables) themselves were estimated with the \verb|svaseq| function.
 For this estimation, the same full model with intercept and phenotype terms was used, and the null model was set to include an intercept term alone.
 The surrogate variables returned from this process included latent factors affecting every sample and were included as variables in the sample annotation matrix along with tissue phenotype.
 
-\subsection*{Data vizualization}
+\subsection*{Data visualization}
 Results of high dimensional data analysis were displayed in figures generated with the \emph{ggplot2} package \citep{Wickham2016}.
-Multipanel figures were assembled using the \emph{cowplot} package \cite{Wilke2020}.
+Multi-panel figures were assembled using the \emph{cowplot} package \cite{Wilke2020}.
 
-Expression levels used for vizualization were based on normalized, transformed, and adjusted counts.
-Normalization was performed with the \emph{DESeq2} package \citep{Love2014} using the \verb|estimateSizeFactors| and then \verb|counts| functions.
+Expression levels used for visualization were based on normalized, transformed, and adjusted counts.
+Normalization was performed with the \emph{DESeq2} package \citep{Love2014} using the \verb|estimateSizeFactors| and \verb|counts| functions.
 The \verb|counts| function was used with the \verb|normalized| argument set to TRUE.
 Transformation was performed with \emph{DESeq2} using the variance stabilizing transformation on normalized counts.
 The variance stabilizing transformation includes a log2 transformation.
 Finally, adjustment of normalized and transformed counts for latent factors was performed with \emph{limma} using the \verb|remoteBatchEffect| function.
 The normalized, transformed, and adjusted counts were used in histograms to represent expression levels of GENCODE genes and HERV loci.
 These counts were also overlaid atop boxplots to represent expression levels of tumor specific HERV loci.
-Lastly, the same counts were used to calculate Z-scores to represent expression levels of all HERV loci tested.
+The same counts were used to calculate Z-scores to represent expression levels of all HERV loci tested.
 
-Effect sizes (i.e. $log2(fold change)$) used for vizualization of correlations between different analyses were calculated by \emph{DESeq2} regression models and used without shrinkage.
+Effect sizes (i.e. $log2(fold change)$) used for visualization of correlations between different analyses were calculated by \emph{DESeq2} regression models and used without shrinkage.
 Effect sizes used for volcano plots (i.e. scatter plots of $log2(fold change)$ versus $-log10(\emph{P})$) were shrunken with the \emph{ashr} package \citep{Stephens2020}.
+
+\subsection*{Assessment of expression estimates}
+The present analysis relied on a modified reference transcriptome and an updated mapping and quantification algorithm relative to a prior study of the same samples \citep{Dampier2020}.
+Consistency of relative protein coding gene expression between phenotypes in the present analysis and the prior analysis was tested by comparing fold change estimates.
+Pearson correlation coefficients for comparisons between tumor samples and healthy and tumor adjacent samples were 0.95 and 0.97, respectively (Supplementary Figure 1a,b).
+The high concordance of estimates of relative expression between analyses indicated the new bioinformatics techniques employed in the current analysis did not substantially alter estimates of transcript abundance.

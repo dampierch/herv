@@ -1,12 +1,12 @@
-In this study, we performed the largest unbiased assessment of transcribed, previously unannotated human endogenous retroviral elements in colorectal tissue to date.
-We found several unique proviral loci with tumor specific over expression and other loci with relatively high expression in healthy samples.
+In this study, we performed the largest unbiased assessment of transcribed, unannotated human endogenous retroviral elements in colorectal tissue to date.
+We found several unique proviral loci with tumor specific over-expression and other loci with relatively high expression in healthy samples.
 Human endogenous retroviral elements are often transcriptionally repressed repetitive sequences that are frequently de-repressed in epigenetically altered cancer cells \citep{Babaian2016}.
 HERV transcripts have been shown to engage pattern recognition receptors and activate interferon responses in cancer cell lines \citep{Chiappinelli2015, Roulois2015} and have been associated with tumor infiltration by T regulatory cells \citep{Desai2017}, response to immune checkpoint blockade in urothelial carcinoma, and survival in subjects with CRC \citep{Solovyov2018}.
 Our results are important because the tumor specific HERV sequences we identified could be used to distinguish tumor from non-tumor tissue in screening and surveillance and could be used to predict or even modify response to immunotherapies.
 
 Three of the seven HERV proviruses we validated as tumor specific were from group H.
 Over expression of HERV-H proviruses in CRC has been demonstrated previously with microarray \citep{Perot2012} and quantitative real time polymerase chain reaction \citep{Perot2015}.
-The prominence of HERV-H transcripts in RNA-seq from TCGA CRC samples has also been previously reported \citep{Desai2017, Attig2019}.
+The prominence of HERV-H transcripts in RNA-seq from TCGA COAD samples has also been previously reported \citep{Desai2017, Attig2019}.
 Therefore, our findings are generally consistent with prior work.
 However, we provide new evidence of the reliability of tumor specific over expression by jointly analyzing a large number of samples from different studies.
 Furthermore, our analysis was not restricted to a particular group of proviruses.
@@ -20,23 +20,24 @@ Identification of protein sequences that could be translated from tumor specific
 
 This study also demonstrated widespread expression of a subset of HERVs in healthy colorectal tissue.
 Interpretation of this result is challenging.
-HERVs have been shown to have rare functional roles in healthy cells \citep{Rote2004} and could conceivably have a role in maintaining healthy colorectal epithelium, but this is speculative.
+HERVs can have rare functional roles in healthy cells \citep{Rote2004} and could conceivably have a role in maintaining healthy colorectal epithelium, but this is speculative.
 Over expression in healthy tissue may be a characteristic of the subset of HERV transcripts selected for analysis.
 Selected transcripts were previously unannotated and understudied, so their patterns of expression are largely unknown.
 Notwithstanding the biological implications of high levels of HERV expression in healthy samples, the bioinformatic implications were reassuring.
-Transcripts of repeat elements included in this study were assembled exclusively from contigs of cancer tissue \citep{Attig2019}, which might be expected to favor the detection of widespread tumor specific over expression.
-The over expression of HERVs in healthy tissue reduced the likelihood of this bias.
+Transcripts of repeat elements included in this study were assembled exclusively from contigs of cancer tissue \citep{Attig2019}, which might be expected to favor the detection of widespread tumor specific over-expression.
+The over-expression of HERVs in healthy tissue reduced the likelihood of this bias.
 
-The major limitation of this study was its reliance on heterogeneous RNA-seq datasets and quantifications of short reads of repetitive sequences that are infamously challenging to estimate accurately.
+A major limitation of this study was its reliance on heterogeneous RNA-seq datasets and quantifications of short reads of repetitive sequences that are difficult to estimate accurately.
 Expression differences may have resulted from technical or demographic differences between phenotypes.
-To address these limitations, we built a complex bioinformatic pipeline based on state of the art software.
+An additional limitation is the prominence of TCGA samples in all three cohorts studied, which could compromise independence of expression signals across cohorts despite independence of subjects.
+To address these limitations, we built a sophisticated bioinformatic pipeline based on state-of-the-art software.
 Specifically, our definition of HERV elements was of critical importance.
 We used a published, hidden Markov model based annotation of a \emph{de novo} assembled cancer transcriptome to define and locate the HERV transcripts and loci we studied \citep{Attig2019}.
 We used a published, alignment-free, k-mer matching quantification algorithm to probabilistically estimate transcript abundance of repetitive sequences that may otherwise have been excluded from analysis due to multiple possible mappings \citep{Patro2017}.
-We used latent factor analysis to adjust for multiple confounders, including subject age and sequencing artifacts across studies \citep{sva}.
+We used latent factor analysis to effectively adjust for multiple confounders, including subject age \citep{sva}.
 We used actively developed and updated statistical packages designed specifically for high dimensional genomics analyses to perform association tests \citep{Love2014, sva}.
 We also pursued multiple validations of our findings and methods to ensure reproducibility.
 
 The aim of this work was to prioritize HERV transcripts for potential development as novel biomarkers or immunotargets in the management of CRC.
 Markers and targets for immune modulation are of particular relevance given the emergence of immune checkpoint inhibition as an effective treatment for advanced disease.
-The seven proviruses we identified were consistently and reliably over expressed in colorectal tumors and warrant future investigation.
+The seven proviruses we identified were consistently and reliably over-expressed in colorectal tumors and warrant future investigation.
