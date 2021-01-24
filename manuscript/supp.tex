@@ -22,24 +22,7 @@
     \graphicspath{{figs/}}                    %% set path to figures relative to this document
     \captionsetup{singlelinecheck=false, justification=justified}
 
-    \title{Supplement to Human Endogenous Retroviral Transcripts Show Potential as Novel, Tumor Specific Biomarkers for Colorectal Cancer}
-
-    \author[1]{Christopher H. Dampier, MD}
-    \author[2]{David F. Grabski, MD, PhD}
-    \author[1]{Matthew Devall, PhD}
-    \author[3]{Virginia Diez-Obrero, BS}
-    \author[3]{Ferran Moratalla-Navarro, MS}
-    \author[4]{David Rekosh, PhD}
-    \author[4]{Marie-Louise Hammarskjold, PhD}
-    \author[5]{Sara K. Rasmussen, MD, PhD}
-    \author[3]{Victor Moreno, MD, PhD}
-    \author[1]{Graham Casey, PhD}
-
-    \affil[1]{Center for Public Health Genomics, University of Virginia, Charlottesville, Virginia, USA}
-    \affil[2]{Department of Surgery, University of Virginia, Charlottesville, Virginia, USA}
-    \affil[3]{Catalan Institute of Oncology, Barcelona, Spain}
-    \affil[4]{Department of Microbiology, Immunology and Cancer Biology, University of Virginia, Charlottesville, Virginia, USA}
-    \affil[5]{Department of Surgery, Seattle Children's, Seattle, Washington, USA}
+    \input{sups/title.tex}
 
     %% redefine maketitle function to customize title formatting
         %% https://tex.stackexchange.com/questions/85343/left-align-abstract-title-and-authors
@@ -52,7 +35,7 @@
                 \LARGE\textbf{\@title}
                 \newline
                 \newline
-                \normalsize\@author
+                \small\@author
             \end{flushleft}
         \endgroup
     }
@@ -86,7 +69,7 @@
 \begin{figure}[ht]
   \makebox[\textwidth][c]
   {
-    \includegraphics[width=0.9\textwidth]{spf1}
+    \includegraphics[width=0.8\textwidth]{spf1}
   }
   \caption{Correlations of effect sizes across studies and cohorts}
   \label{fig:corrs}
@@ -95,7 +78,61 @@
 \begin{figure}[ht]
   \makebox[\textwidth][c]
   {
-    \includegraphics[width=0.9\textwidth]{spf2}
+    \includegraphics[width=1.2\textwidth]{spf2}
+  }
+  \caption{Receiver operating characteristic curves in discovery cohort}
+  \label{fig:rocA}
+\end{figure}
+
+\begin{figure}[ht]
+  \makebox[\textwidth][c]
+  {
+    \includegraphics[width=1.2\textwidth]{spf3}
+  }
+  \caption{Receiver operating characteristic curves in independent cohort}
+  \label{fig:rocC}
+\end{figure}
+
+\begin{figure}[ht]
+  \makebox[\textwidth][c]
+  {
+    \includegraphics[width=0.6\textwidth]{spf4}
+  }
+  \caption{Receiver operating characteristic curves in second independent cohort}
+  \label{fig:rocB}
+\end{figure}
+
+\begin{figure}[ht]
+  \makebox[\textwidth][c]
+  {
+    \includegraphics[width=0.8\textwidth]{spf5}
+  }
+  \caption{Relationship between subject age and HERV expression level}
+  \label{fig:age}
+\end{figure}
+
+\begin{figure}[ht]
+  \makebox[\textwidth][c]
+  {
+    \includegraphics[width=1.2\textwidth]{spf6}
+  }
+  \caption{Relationship between tumor MSI status or stage and HERV expression level}
+  \label{fig:msistage}
+\end{figure}
+
+\begin{figure}[ht]
+  \makebox[\textwidth][c]
+  {
+    \includegraphics[width=0.6\textwidth]{spf7}
+  }
+  \caption{Relationship between cytotoxic T cell markers and HERV expression level}
+  \label{fig:cd8}
+\end{figure}
+
+\begin{figure}[ht]
+  \makebox[\textwidth][c]
+  {
+    \includegraphics[width=0.9\textwidth]{spf8}
   }
   \caption{Boxplots re-demonstrating healthy specific over expression using a novel HERV-K transcriptome}
   \label{fig:grabski_method}

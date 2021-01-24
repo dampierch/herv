@@ -12,13 +12,13 @@ We found 1,513 unique HERV loci with at least a single read detected in at least
 These 1,513 proviruses tended to have lower expression compared to levels of mRNA from canonical protein coding genes.
 This trend was observed when all tissue phenotypes were aggregated and when tumor samples were considered separately (Figure \ref{fig:pre_sum}C,D).
 
-To identify HERV proviruses with potential to function as protein coding genes and succeed as biomarkers or immunotargets, we filtered HERV loci by expression level relative to GENCODE protein coding genes.
+To identify HERV proviruses with potential to express proteins and function as possible biomarkers or immunotargets, we filtered HERV loci by expression level relative to GENCODE protein coding genes.
 Of the 1,513 unique loci detected, 150 were expressed at levels within one standard deviation of the median of canonical protein coding genes (Figure \ref{fig:pre_sum}A).
 These 150 moderately expressed proviruses were retained for association testing along with GENCODE protein coding genes.
 Approximately half were from HERV group K or H (Figure \ref{fig:pre_sum}B).
 
 \subsection*{Proviruses associated with colorectal cancer}
-To test our hypothesis that HERV proviral elements would be preferentially transcribed in tumor samples compared to healthy and tumor adjacent samples, we regressed gene and proviral counts on tissue phenotype.
+To test our hypothesis that some HERV proviral elements would be preferentially transcribed in tumor samples compared to healthy and tumor adjacent samples, we regressed gene and proviral counts on tissue phenotype.
 Confounding factors (e.g. age) across tissue phenotypes were modeled with latent factor anaylsis (see Methods), and association tests were adjusted by including terms for the latent factors in regression models.
 We compared tumor samples to healthy samples and to tumor adjacent samples in separate association tests because we had previously found evidence of a transcriptomic field effect in the setting of CRC that can mask cancer specificity of some genes \citep{Dampier2020}.
 Without knowledge of whether HERV transcripts are likely to be affected by the transcriptomic field effect, we performed separate association tests and compared the results.
@@ -64,7 +64,7 @@ To demonstrate the frequency with which healthy samples harbored relatively high
 The darker shade of the healthy panels indicated higher expression levels of most HERVs across all groups.
 Subsets of HERV loci from each group demonstrated higher expression in tumors, but these were exceptions.
 
-To verify this surprising result, we tested for differential expression in the discovery cohort using an alternative HERV transcriptome recently compiled by manual curation of published but nevertheless poorly annotated HERV-K (HML-2) sequences \citep{Grabski2020}.
+To verify this result, we tested for differential expression in the discovery cohort using an alternative HERV transcriptome recently compiled by manual curation of published HERV-K (HML-2) sequences \citep{Grabski2020}.
 The alternative transcriptome included 91 proviruses.
 A total of six were differentially expressed between healthy and tumor samples (\emph{P} adjusted < 0.05).
 All but one of the six were higher in healthy samples, indicating healthy specific over expression was not an artifact of our customized HERV transcriptome (Supplementary Figure 2).

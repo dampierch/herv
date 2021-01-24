@@ -11,7 +11,7 @@ An important characteristic of the discovery cohort and independent cohort \#1 w
 To permit valid inference from regular linear models, only one tissue phenotype was used per subject.
 
 Samples were originally gathered from publicly available RNA-seq datasets hosted on the Genomic Data Commons and Sequence Read Archive as well as from a recently generated dataset of healthy mucosal biopsies obtained during screening colonoscopies at the Catalan Institute of Oncology in Barcelona, Spain \citep{Dampier2020, DiezObrero2020}.
-A complete description of sample selection and cohort construction for the curated dataset is available in Dampier et al. \citep{Dampier2020}.
+A complete description of sample selection and cohort construction for the curated dataset is available in Dampier et al. (2020) \citep{Dampier2020}.
 RNA-seq reads for all samples were stored and analyzed in FASTQ format.
 For samples downloaded in BAM format, Biobambam2 v2.0.87 \citep{Tischler2014} was used to convert reads to FASTQ format.
 
@@ -22,9 +22,9 @@ Names and coordinates of repeat elements were generated using RepeatMasker \cite
 The method relies on profile hidden Markov models representing known human repeat families to classify repeat elements throughout the genome.
 
 Previously unannotated HERV genes were selected for the current study in multiple steps.
-A complete gene transfer format (GTF) \citep{GTF} annotation of the repeat element inclusive cancer transcriptome was downloaded from Attig et al. \citep{Attig2019}.
+A complete gene transfer format (GTF) \citep{GTF} annotation of the repeat element inclusive cancer transcriptome was downloaded from Attig et al. (2019) \citep{Attig2019}.
 The annotation was parsed with a custom Python script to produce a new annotation in BED12 \citep{BED12} format.
-Transcripts were selected based on three criteria: i) overlap of at least one exon with a long terminal repeat element, ii) classification of at least one exon as HERV derived, and iii) abscence of any exon overlapping an annotated GENCODE gene.
+Transcripts were selected based on three criteria: i) overlap of at least one exon with a long terminal repeat element, ii) classification of at least one exon as HERV derived, and iii) absence of any exon overlapping an annotated GENCODE gene.
 All transcripts labeled with the same repeat element identifier (i.e. repeat element class along with genomic coordinates) were considered isoforms of the same HERV locus.
 Genomic coordinates were extracted for all constituent exons of selected transcripts to permit inference of splice sites and exclusion of intronic sequences.
 For display purposes, repeat element identifier genomic coordinates were converted to cytobands based on the cytoBand table downloaded from the UCSC Genome Browser \citep{Furey2003, Navarro2020}.

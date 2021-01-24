@@ -1,23 +1,15 @@
 \textbf{Background}:
-Colorectal cancer is the second leading cause of cancer death in the United States.
-Identification of novel genomic features with potential utility as diagnostic or prognostic biomarkers or therapeutic targets could help improve detection and treatment of patients with colorectal cancer.
-Features associated with immune modulation are of particular relevance given the emergence of immune checkpoint inhibition as an effective treatment for advanced disease.
-Endogenous retroviral elements expressed in tumors could be exploited for diagnostic or therapeutic use.
-To identify novel markers and targets for immune mediated cancer therapies, we tested for cancer specific over expression of non-canonical endogenous retroviral transcripts in a large cohort of colorectal transcriptomes.
+Transcripts from novel genomic features such as endogenous retroviruses have potential utility as biomarkers or therapeutic targets, and their characterization could help improve detection and treatment of colorectal cancer.
+To identify uncharacterized transcripts for possible diagnostic and therapeutic applications, we examined cancer specific over expression of unannotated endogenous retroviral mRNA in a large cohort of colorectal transcriptomes.
 
 \textbf{Methods}:
-A curated RNA sequencing dataset composed of 1,139 human primary colorectal tissue samples divided into three independent cohorts was re-processed using a novel annotation of repeat element transcripts to quantify levels of human endogenous retroviral mRNA in colorectal transcriptomes.
-A total of 474 healthy, 133 tumor adjacent normal, and 532 tumor samples were profiled with short read sequencing.
-Transcripts were quantified with Salmon using the GENCODE v36 transcriptome augmented to include unannotated exons from long terminal repeat elements classified as human endogenous retroviruses in the Dfam database.
-Associations between transcript expression and tissue phenotype were tested using \emph{DESeq2} in the R statistical programming language.
+Bulk RNA sequencing reads from human primary colorectal tissue, including 474 healthy, 133 tumor adjacent normal, and 532 tumor samples, were obtained from public sources and from our own data and re-processed using a custom reference transcriptome.
+Transcripts were quantified using Salmon with GENCODE transcripts combined with novel endogenous retroviral transcripts from a recently described cancer transcriptome.
+Associations between transcript expression and tissue phenotype were determined using \emph{DESeq2} in the R statistical programming language.
 
 \textbf{Results}:
-Out of 5,025 unannotated proviral loci queried in our discovery analysis, 150 were expressed within one standard deviation of median protein coding gene expression in at least one tissue phenotype.
-Over half of the 150 loci were from two groups of endogenous retrovirus (51 from K, 26 from H).
+Of 5,025 unannotated proviral loci queried in our discovery analysis, 150 were expressed within one standard deviation of median protein coding gene expression in at least one tissue phenotype.
 Tumor specific over expression was observed in 11 of the 150 loci tested (\emph{P} adjusted < 0.05), and seven were validated in an independent cohort.
-Widespread proviral expression was also found in healthy tissues.
 
 \textbf{Conclusions}:
-In the largest unbiased assessment of non-canonical human endogenous retroviral transcript expression in colorectal transcriptomes, we found relatively few loci expressed at levels similar to canonical protein coding genes.
-Nevertheless, we identified seven proviruses with tumor specific expression patterns.
-These proviruses have potential as novel biomarkers or immunotargets and should be prioritized in future investigations.
+In the largest unbiased assessment of unannotated human endogenous retroviral transcript expression in colorectal tissue to date, we identified over 100 proviral loci expressed at levels similar to canonical protein coding genes and seven that could be novel biomarkers of colorectal cancer or targets of immunotherapy.

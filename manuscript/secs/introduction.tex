@@ -1,31 +1,31 @@
 Colorectal cancer (CRC) is a common malignancy in the United States.
-Early detection and effective treatment result in a 5-year relative survival of 90\% for patients diagnosed with local disease.
+Early detection and effective treatment result in a 5-year relative survival of 90\% for patients diagnosed with local disease \citep{SEER2020}.
 However, early detection relies on screening strategies in which nearly a third of adults do not participate as recommended \citep{CDC2019}.
 Furthermore, over a fifth of new cases are diagnosed with metastatic disease, which has a 5-year relative survival of only 14\% \citep{SEER2020}.
 To improve detection and treatment of patients with colorectal cancer, new diagnostic and therapeutic approaches are needed.
 
-Screening and treatment strategies have begun to rely on genomic biomarkers for prediction and prognosis, and novel genomic features with better sensitivity and specificity are under active investigation \citep{Imperiale2014, Sveen2020}.
-Among emerging treatment strategies, immune checkpoint inhibition is effective against metastatic tumors with mismatch repair defficiency and high microsatellite instability \citep{Le2015, Overman2018}.
-Unfortunately, only 4\% of metastatic CRCs display high microsatellite instability \citep{Ganesh2019}.
-Identification of additional classes of tumor with potential susceptibilty to immunotherapy and development of treatments to improve tumor immunogenicity are required to help extend the benefit of checkpoint blockade.
-Endogenous retroviral elements expressed in cancers may offer a solution.
+Screening and treatment strategies rely increasingly on genomic biomarkers for prediction and prognosis, and identification of novel genomic features with better sensitivity and specificity are under active investigation \citep{Imperiale2014, Sveen2020}.
+Among emerging treatment strategies, immune checkpoint inhibition is effective against metastatic tumors with mismatch repair deficiency and high microsatellite instability \citep{Le2015, Overman2018}, but only 4\% of metastatic CRCs display high microsatellite instability \citep{Ganesh2019}.
+Identification of additional classes of tumor with potential susceptibilty to immunotherapy and development of treatments to improve tumor immunogenicity would help extend the benefit of checkpoint blockade.
+Endogenous retroviral elements expressed in cancers may be of value in these efforts.
 
-Human endogenous retroviruses (HERVs) are formerly transposable, proviral elements previously integrated into the human genome and now incompetent of transposition, replication, or infection \citep{Babaian2016}.
-Residual HERV elements in contemporary human genomes are the consequence of retroviral infections of germ cells millions of years ago.
-Since then, like the rest of the human genome, HERV elements have accumulated point mutations and segmental deletions.
-These alterations in HERV sequences disrupt assembly of functional viral machinery.
-Nevertheless, some HERV sequences can be transcribed and translated, and some protein products can be processed as endogenous antigens and presented on major histocompatibility complex class I molecules \citep{Boller1997, Mullins2012, Rooney2015}.
-In healthy tissues, DNA methylation and histone modification silence HERV transcription, but epigenetic modifications in the context of cancer can de-repress HERV transcription and occasionally lead to translation of neoantigens \citep{Babaian2016, Menendez2004, Wiesner2015}.
+Human endogenous retroviruses (HERVs) are DNA elements previously integrated into the human genome.
+They are the consequence of retroviral infections of germ cells and subsequent rounds of endogenous retrotransposition.
+Over time, most HERV elements have accumulated numerous point mutations and segmental deletions.
+These alterations often disrupt viral functions, making the genomes incompetent to retrotranspose or express proteins \citep{Babaian2016}.
+Nevertheless, some HERV sequences are still capable of being transcribed and translated, and protein products from these mRNAs can be processed as endogenous antigens and presented on major histocompatibility complex class I molecules \citep{Boller1997, Mullins2012, Rooney2015}.
+In healthy tissues, DNA methylation and histone modification often silence HERV transcription, but epigenetic modifications in the context of cancer can lead to de-repression of HERV transcription and occasionally to translation of neoantigens \citep{Babaian2016, Menendez2004, Wiesner2015}.
 
-The HERV transcriptome is a promising source of novel genomic features for cancer detection and treatment because of the putative cancer specificity of HERV mRNA expression and its association with immune modulation \citep{Chiappinelli2015, Roulois2015, Desai2017, Solovyov2018}.
+The HERV derived transcriptome is a promising source of novel genomic features for cancer detection and treatment because of the putative cancer specificity of HERV mRNA expression and its association with immune modulation \citep{Chiappinelli2015, Roulois2015, Desai2017, Solovyov2018}.
 A major challenge to the development of HERVs as cancer biomarkers is the absence of consensus on how to define and identify HERV elements.
-Proviruses are generally absent from human gene and transcript annotations, and their structural features make them hard to identify in agnostic surveys based on DNA or RNA sequencing \citep{ERVmap2018, Treangen2011}.
-Proviral genomes are flanked by repetitive elements that often cannot be mapped with short read sequencing.
-Furthermore, HERVs were originally transposable elements that have generated many similar proviral integrations throughout the human genome.
+Proviral sequences are frequently absent from human gene and transcript annotations, and their structural features make them hard to identify in agnostic surveys based on DNA or RNA sequencing \citep{ERVmap2018, Treangen2011}.
+Their repetitive sequences often result in bioinformatic exclusion from analysis.
+Proviral genomes are also frequently flanked by repetitive elements that often cannot be mapped using short read sequencing.
+Furthermore, HERVs were originally transposable elements that generated many similar proviral integrations throughout the human genome.
 The multitude of similar sequences across the genome impairs accurate high throughout read alignment.
-As a result, the genomic locations and transcriptional abundances of most HERVs are not known with confidence.
+As a result, the genomic locations of origin and transcriptional abundance of most HERV mRNAs remain largely unknown.
 
 Recently, new approaches have been developed to overcome traditional limitations in HERV annotation and quantification \citep{Attig2017, Attig2019, ERVmap2018, Telescope2019, Grabski2020}.
 Here, we extend advances in the characterization of HERV transcripts to discover novel CRC specific expression patterns in human colorectal transcriptomes.
 We hypothesized that HERV proviral elements would be preferentially transcribed in tumor samples compared to healthy and tumor adjacent, histologically normal samples.
-We tested this hypothesis in a curated dataset of healthy, tumor adjacent, and tumor RNA sequencing (RNA-seq) reads and found several HERV proviruses over expressed in tumors but many that had greater expression in healthy tissue.
+We tested this hypothesis in a curated dataset of healthy, tumor adjacent, and tumor RNA sequencing (RNA-seq) reads and found several HERV proviruses over expressed in tumors and others that showed greater expression in healthy tissue.
