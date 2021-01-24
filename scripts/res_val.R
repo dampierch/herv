@@ -175,27 +175,50 @@ build_val_df <- function(restabs, l) {
     valdf <- valdf[valdf$order, ]
     fields <- c("HERV ID", "Mean", "Log2(FC)", "SE", "Stat", "P", "P Adj", "FC", "CTL", "HERV", "o")
     colnames(valdf) <- fields
-    fields <- c("HERV", "Mean", "FC", "Log2(FC)", "SE", "Stat", "P", "P Adj", "CTL")
-    valdf <- valdf[ , fields]
+    ## main results table
+    fields1 <- c("HERV", "Mean", "FC", "Log2(FC)", "SE", "Stat", "P", "P Adj", "CTL")
+    valdf1 <- valdf[ , fields1]
     for (i in c("Mean", "Log2(FC)", "SE", "Stat", "P", "P Adj")) {
-        valdf[ , i] <- signif(valdf[ , i], 2)
+        valdf1[ , i] <- signif(valdf1[ , i], 2)
     }
-    valdf$HERV <- gsub("HERV", "", valdf$HERV)
-    valdf$HERV <- gsub("_", " ", valdf$HERV)
-    return(valdf)
+    valdf1$HERV <- gsub("HERV", "", valdf1$HERV)
+    valdf1$HERV <- gsub("_", " ", valdf1$HERV)
+    ## supplementary table
+    fields2 <- c("HERV ID", "HERV")
+    valdf2 <- valdf[ , fields2]
+    valdf2$CHROM <- unlist(
+        lapply(strsplit(valdf2[ , "HERV ID"], "[|]"), "[[", 3)
+    )
+    valdf2$START <- unlist(
+        lapply(strsplit(valdf2[ , "HERV ID"], "[|]"), "[[", 4)
+    )
+    valdf2$STOP <- unlist(
+        lapply(strsplit(valdf2[ , "HERV ID"], "[|]"), "[[", 5)
+    )
+    return(setNames(list(valdf1, valdf2), c("main", "supp")))
 }
 
 
 write_valtable <- function(valdf, target) {
     cat("Writing validated results to tex table\n")
+    lab <- "tab:val"
+    dig <- c(0, 0, 0, 0, 2, 2, 2, 2, 2, 0)
+    dis <- c("d", "s", "f", "f", "f", "f", "f", "E", "E", "s")
+    siz <- "small"
+    if ("HERV ID" %in% colnames(valdf)) {
+        lab <- "tab:valsupp"
+        dig <- c(0, 0, 0, 0, 0, 0)
+        dis <- c("d", "s", "s", "f", "f", "f")
+        siz <- "footnotesize"
+    }
     obj <- xtable::xtable(
         valdf,
         caption="Tumor specific HERV proviruses validated in independent cohort",
-        label="tab:val",
-        digits=c(0, 0, 0, 0, 2, 2, 2, 2, 2, 0),
-        display=c("d", "s", "f", "f", "f", "f", "f", "E", "E", "s")
+        label=lab,
+        digits=dig,
+        display=dis
     )
-    xtable::print.xtable(obj, file=target, size="small", include.rownames=FALSE,
+    xtable::print.xtable(obj, file=target, size=siz, include.rownames=FALSE,
         hline.after=c(0,nrow(obj)), caption.placement="top",
         sanitize.colnames.function=function(x){paste('{\\textbf{',x,'}}', sep='')}
     )

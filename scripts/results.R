@@ -143,11 +143,13 @@ validation_tests <- function() {
     write_cor_val(pl, target)
 
     l <- extract_main_hervs(restabs)
-    valdf <- build_val_df(restabs, l)
+    valdfs <- build_val_df(restabs, l)
     target_dir <- Sys.getenv("table_dir")
     check_dir(target_dir)
     target <- paste0(target_dir, "herv-val-table.tex")
-    write_valtable(valdf, target)
+    write_valtable(valdfs$main, target)
+    target <- paste0(target_dir, "herv-val-table-supp.tex")
+    write_valtable(valdfs$supp, target)
     l2 <- stringent_val(l)
     return(l2)
 }

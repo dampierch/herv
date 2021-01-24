@@ -17,6 +17,7 @@ spf6=${11}
 spf7=${12}
 spt1=${13}
 spt2=${14}
+spt3=${15}
 
 cp $fig1 ../manuscript/figs/fig1.pdf
 cp $fig2 ../manuscript/figs/fig2.pdf
@@ -32,6 +33,7 @@ cp $spf6 ../manuscript/figs/spf6.pdf
 cp $spf7 ../manuscript/figs/spf7.pdf
 cp $spt1 ../manuscript/tabs/spt1.tex
 cp $spt2 ../manuscript/tabs/spt2.tex
+cp $spt3 ../manuscript/tabs/spt3.tex
 
 printf '%s' "Adding texlive to \$PATH\n"
 export PATH=$PATH:/home/chd5n/apps/texlive/2020/bin/x86_64-linux; xelatex -v

@@ -316,7 +316,9 @@ rule results:
         # '/scratch/chd5n/herv/results/plots/herv-val-cor_A.pdf'
         # '/scratch/chd5n/herv/results/plots/herv-im_A.pdf',
         # '/scratch/chd5n/herv/results/plots/herv-herv-msi_stage_A.pdf',
-        # '/scratch/chd5n/herv/results/plots/herv-age_A.pdf'
+        # '/scratch/chd5n/herv/results/plots/herv-age_A.pdf',
+        # '/scratch/chd5n/herv/results/tables/herv-val-table.tex',
+        # '/scratch/chd5n/herv/results/tables/herv-val-table-supp.tex'
     shell:
         '''
         source {input.cfg}
@@ -361,6 +363,7 @@ rule manuscript:
         spf7 = '/scratch/chd5n/meta/herv/metaPhenoPeUqSampIndSmpAllGeDesResLfcHervExp.pdf',
         spt1 = '../manuscript/tabs/tab_ind1.tex',
         spt2 = '../manuscript/tabs/tab_ind2.tex',
+        spt3 = '/scratch/chd5n/herv/results/tables/herv-val-table-supp.tex',
         sh = 'xelatex.sh'
     output:
         res = '../manuscript/main.pdf'
@@ -371,5 +374,5 @@ rule manuscript:
             {input.tab1} {input.tab2} \
             {input.spf1} {input.spf2} {input.spf3} {input.spf4} {input.spf5} \
             {input.spf6} {input.spf7} \
-            {input.spt1} {input.spt2}
+            {input.spt1} {input.spt2} {input.spt3}
         '''
