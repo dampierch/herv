@@ -5,7 +5,6 @@ ggp_theme_default <- theme(
     panel.background=element_rect(fill="white"),
     panel.grid.major=element_line(color="white"),
     panel.grid.minor=element_line(color="white"),
-    plot.background=element_rect(fill="white"),
     plot.margin=margin(t=1, r=1, b=1, l=1, unit="lines"),
     plot.title=element_text(size=12, face="bold", hjust=0.5),
     plot.subtitle=element_text(size=10, face="plain", hjust=0.5),
@@ -81,6 +80,19 @@ ggp_theme_heat <- ggp_theme_default +
         axis.line.y.left=element_blank(),
         legend.position="top",
         legend.title=element_text(size=9, face="plain")
+    )
+
+
+ggp_theme_charac <- ggp_theme_default +
+    theme(
+        panel.border=element_rect(colour="black", size=1.0, fill=NA),
+        plot.margin=margin(t=0.5, r=0.5, b=0.5, l=0.5, unit="lines"),
+        axis.text.x=element_text(size=8, face="plain"),
+        axis.text.y=element_text(size=8, face="plain"),
+        strip.text=element_text(colour="white"),
+        axis.line.x.bottom=element_blank(),
+        axis.line.y.left=element_blank(),
+        legend.position="none"
     )
 
 

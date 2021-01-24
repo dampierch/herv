@@ -15,10 +15,8 @@
 ## load dgeobj into list and herv-specific results into dataframe
 ## create boxplots showing top herv hits
 
-## try to highlight samples with MSS
-
-## try showing alignments of top hit along with sequence and predictied protein
-## try showing possible HLA binding sites in predicted protein
+## correlation with age, stage, msi status, immunomarkers
+## tumor vs non tumor roc, survival vs expression level
 
 
 BiocManager::install()
@@ -34,13 +32,6 @@ library(EnsDb.Hsapiens.v86)
 library(scales)
 
 
-args <- commandArgs(trailingOnly=TRUE)
-cohort <- args[2]
-validate <- as.numeric(args[3])
-cat(paste("Cohort:", cohort, "\n"))
-cat(paste("Validate:", validate, "\n"))
-
-
 source("res_utilities.R")
 source("res_themes.R")
 source("res_corr.R")
@@ -50,6 +41,14 @@ source("res_topherv.R")
 source("res_infla.R")
 source("res_val.R")
 source("res_figs.R")
+source("res_characterize.R")
+
+
+args <- commandArgs(trailingOnly=TRUE)
+cohort <- args[2]
+validate <- as.numeric(args[3])
+cat(paste("Cohort:", cohort, "\n"))
+cat(paste("Validate:", validate, "\n"))
 
 
 correlation_analysis <- function() {
@@ -103,6 +102,7 @@ topherv_analysis <- function(dgeobj) {
 
 
 main <- function() {
+    cat("Running main() ...\n")
     if (cohort == "A") {
         correlation_analysis()
         dgeobj <- herv_element_summary()
@@ -133,6 +133,7 @@ inflation_tests <- function() {
 
 
 validation_tests <- function() {
+    cat("Running validation_tests() ...\n")
     restabs <- fill_restabs()
 
     pl <- val_corr_analysis(restabs)
@@ -162,10 +163,53 @@ make_figures <- function() {
 }
 
 
+characterization_tests <- function() {
+    cat("Running characterization_tests() ...\n")
+    l <- read_charac_inputs(cohort)
+    herv_levels <- c(
+        "H Xp22.32", "IP10F 9q13", "H 13q33.3", "K9 13q12.11", "IP10F 9p11.2",
+        "H 20p11.23", "1 I 3p22.3", "L 9q21.11", "H 5q15", "E a 7q22.1",
+        "H 13q14.11"
+    )
+
+    feature <- "immunomarker"
+    df <- prep_charac_df(l$herv_ids, l$dgeobj, l$markers, feature)
+    pl <- make_charac_im_plotlist(l, df, herv_levels)
+    target <- paste0(Sys.getenv("plot_dir"), "herv-im_", cohort, ".pdf")
+    write_charac_im(target, pl)
+
+    pl <- list()
+    for (feature in c("msi_status", "stage")) {
+        df <- prep_charac_df(l$herv_ids, l$dgeobj, l$markers, feature)
+        df <- prep_charac_msi_stage_age(l$herv_ids, l$dgeobj, df, feature)
+        pl[[feature]] <- plot_charac_msi_stage(df, herv_levels)
+    }
+    target <- paste0(Sys.getenv("plot_dir"), "herv-msi_stage_", cohort, ".pdf")
+    write_charac_msi_stage(target, pl)
+
+    pl <- list()
+    feature <- "age"
+    df <- prep_charac_df(l$herv_ids, l$dgeobj, l$markers, feature)
+    df <- prep_charac_msi_stage_age(l$herv_ids, l$dgeobj, df, feature)
+    pl[[1]] <- plot_charac_age_corr(df, herv_levels)
+    l1 <- prep_charac_age_lm(df)
+    df <- dplyr::bind_rows(l1$fits)
+    df <- df[df$predictor != "int", ]
+    pl[[2]] <- plot_charac_age_tval(df)
+    target <- paste0(Sys.getenv("plot_dir"), "herv-age_", cohort, ".pdf")
+    write_charac_age(target, pl)
+    ## make sure model is decent
+    # df <- dplyr::bind_rows(l1$resids)
+    # check_charac_residuals_freqpoly(df)
+}
+
+
 if (validate == 1) {
     l2 <- validation_tests()
     print(l2)
     make_figures()
+} else if (validate == 2) {
+    characterization_tests()
 } else {
     main()
 }

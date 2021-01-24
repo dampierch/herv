@@ -314,6 +314,9 @@ rule results:
         # '/scratch/chd5n/herv/results/plots/herv-volcano_C.pdf,
         # '/scratch/chd5n/herv/results/plots/herv-counts_A.pdf'
         # '/scratch/chd5n/herv/results/plots/herv-val-cor_A.pdf'
+        # '/scratch/chd5n/herv/results/plots/herv-im_A.pdf',
+        # '/scratch/chd5n/herv/results/plots/herv-herv-msi_stage_A.pdf',
+        # '/scratch/chd5n/herv/results/plots/herv-age_A.pdf'
     shell:
         '''
         source {input.cfg}
@@ -323,16 +326,40 @@ rule results:
             {params.validate}
         '''
 
+rule roc:
+    input:
+        cfg = ancient('config.sh'),
+        R = 'res_roc.R'
+    params:
+        cohort = 'C'
+    output:
+        # '/scratch/chd5n/herv/results/plots/herv-roc_A.pdf',
+        # '/scratch/chd5n/herv/results/plots/herv-roc_B.pdf',
+        '/scratch/chd5n/herv/results/plots/herv-roc_C.pdf'
+    shell:
+        '''
+        source {input.cfg}
+        module load gcc/7.1.0 openmpi/3.1.4 R/4.0.0
+        Rscript {input.R} --args {params.cohort}
+        '''
+
 rule manuscript:
     input:
         main = '../manuscript/main.tex',
+        supp = '../manuscript/supp.tex',
         fig1 = '/scratch/chd5n/herv/results/plots/herv-prelim-expr_A.pdf',
         fig2 = '/scratch/chd5n/herv/results/plots/herv-dge-result.pdf',
         fig3 = '/scratch/chd5n/herv/results/plots/herv-heat.pdf',
         tab1 = '../manuscript/tabs/tab_disc.tex',
         tab2 = '/scratch/chd5n/herv/results/tables/herv-val-table.tex',
         spf1 = '/scratch/chd5n/herv/results/plots/herv-cor-select.pdf',
-        spf2 = '/scratch/chd5n/meta/herv/metaPhenoPeUqSampIndSmpAllGeDesResLfcHervExp.pdf',
+        spf2 = '/scratch/chd5n/herv/results/plots/herv-roc_A.pdf',
+        spf3 = '/scratch/chd5n/herv/results/plots/herv-roc_C.pdf',
+        spf4 = '/scratch/chd5n/herv/results/plots/herv-roc_B.pdf',
+        spf5 = '/scratch/chd5n/herv/results/plots/herv-age_A.pdf',
+        spf6 = '/scratch/chd5n/herv/results/plots/herv-msi_stage_A.pdf',
+        spf7 = '/scratch/chd5n/herv/results/plots/herv-im_A.pdf',
+        spf8 = '/scratch/chd5n/meta/herv/metaPhenoPeUqSampIndSmpAllGeDesResLfcHervExp.pdf',
         spt1 = '../manuscript/tabs/tab_ind1.tex',
         spt2 = '../manuscript/tabs/tab_ind2.tex',
         sh = 'xelatex.sh'
@@ -343,6 +370,7 @@ rule manuscript:
         sh {input.sh} \
             {input.fig1} {input.fig2} {input.fig3} \
             {input.tab1} {input.tab2} \
-            {input.spf1} {input.spf2} \
+            {input.spf1} {input.spf2} {input.spf3} {input.spf4} {input.spf5} \
+            {input.spf6} {input.spf7} {input.spf8} \
             {input.spt1} {input.spt2}
         '''

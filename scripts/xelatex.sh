@@ -10,8 +10,14 @@ tab1=$4
 tab2=$5
 spf1=$6
 spf2=$7
-spt1=$8
-spt2=$9
+spf3=$8
+spf4=$9
+spf5=${10}
+spf6=${11}
+spf7=${12}
+spf8=${13}
+spt1=${14}
+spt2=${15}
 
 cp $fig1 ../manuscript/figs/fig1.pdf
 cp $fig2 ../manuscript/figs/fig2.pdf
@@ -20,6 +26,12 @@ cp $tab1 ../manuscript/tabs/tab1.tex
 cp $tab2 ../manuscript/tabs/tab2.tex
 cp $spf1 ../manuscript/figs/spf1.pdf
 cp $spf2 ../manuscript/figs/spf2.pdf
+cp $spf3 ../manuscript/figs/spf3.pdf
+cp $spf4 ../manuscript/figs/spf4.pdf
+cp $spf5 ../manuscript/figs/spf5.pdf
+cp $spf6 ../manuscript/figs/spf6.pdf
+cp $spf7 ../manuscript/figs/spf7.pdf
+cp $spf8 ../manuscript/figs/spf8.pdf
 cp $spt1 ../manuscript/tabs/spt1.tex
 cp $spt2 ../manuscript/tabs/spt2.tex
 
@@ -29,9 +41,7 @@ export PATH=$PATH:/home/chd5n/apps/pandoc-2.10/bin; pandoc -v
 
 cd ../manuscript/
 rm main.{aux,bbl,blg,log,pdf}
-rm ._main.pdf
 rm supp.{aux,bbl,blg,log,pdf}
-rm ._supp.pdf
 
 xelatex main
 bibtex main
