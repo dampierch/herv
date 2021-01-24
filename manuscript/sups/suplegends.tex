@@ -1,9 +1,8 @@
 \textbf{Figure 1.} Correlations of effect sizes across studies and cohorts. \\
-a) Scatterplot demonstrating relationship between estimates of effect sizes (i.e. $log2(fold change)$) of the tumor phenotype on protein coding genes in the discovery cohort of this analysis (i.e. HERV Study) and Cohort A of a prior analysis of the same samples, as reported in Dampier et al. \citep{Dampier2020} (i.e. Field Effect Study).
+a) Scatterplot demonstrating relationship between estimates of effect sizes (i.e. $log2(fold change)$) of the tumor phenotype on protein coding genes in the discovery cohort of this analysis (i.e. HERV Study) and Cohort A of a prior analysis of the same samples, as reported in Dampier et al. (2020) \citep{Dampier2020} (i.e. Field Effect Study).
 Baseline expression is set by the healthy phenotype.
-Only effect sizes on genes tested in both studies are shown.
-\emph{R} = Pearson correlation coefficient. \\
-b) Scatterplot demonstrating relationship between estimates of effect sizes (i.e. $log2(fold change)$) of the tumor phenotype on protein coding genes in the discovery cohort of this analysis (i.e. HERV Study) and Cohort A of a prior analysis of the same samples, as reported in Dampier et al. \citep{Dampier2020} (i.e. Field Effect Study).
+Only effect sizes on genes tested in both studies are shown. \\
+b) Scatterplot demonstrating relationship between estimates of effect sizes (i.e. $log2(fold change)$) of the tumor phenotype on protein coding genes in the discovery cohort of this analysis (i.e. HERV Study) and Cohort A of a prior analysis of the same samples, as reported in Dampier et al. (2020) \citep{Dampier2020} (i.e. Field Effect Study).
 Baseline expression is set by the tumor adjacent phenotype.
 Only effect sizes on genes tested in both studies are shown. \\
 c) Scatterplot demonstrating relationship between estimates of effect sizes (i.e. $log2(fold change)$) of the tumor phenotype on proviral loci in the discovery cohort of this analysis and independent cohort \#1.
@@ -12,7 +11,43 @@ Only effect sizes on loci tested in both cohorts are shown. \\
 d) Scatterplot demonstrating relationship between estimates of effect sizes (i.e. $log2(fold change)$) of the tumor phenotype on proviral loci in the discovery cohort of this analysis and independent cohort \#2.
 Baseline expression is set by the tumor adjacent phenotype.
 Only effect sizes on loci tested in both cohorts are shown.\\
+\emph{HLT}: healthy, \emph{L2FC}: $log2(fold change)$, \emph{NAT}: normal adjacent to tumor, \emph{R}: Pearson correlation coefficient, \emph{TUM}: tumor. \\
 
-\textbf{Figure 2.} Differential expression of unannotated human endogenous retroviral loci in colorectal transcriptomes using a novel HERV-K reference transcriptome. \\
-Boxplots demonstrating expression levels by phenotype of six proviral loci associated with the tumor phenotype (\emph{P} adjusted < 0.05) in samples from the discovery cohort of this analysis analyzed using an alternative proviral reference transcriptome as described in Grabski et al. \citep{Grabski2020}.
-Five of the six significant associations are negative.
+\textbf{Figure 2.} Receiver operating characteristic curves in discovery cohort. \\
+a) Receiver operating characteristic curves for the 11 tumor specific HERVs evaluated separately as binary classifiers of healthy and tumor samples. \\
+b) Receiver operating characteristic curves for the 11 tumor specific HERVs evaluated separately as binary classifiers of tumor adjacent and tumor samples. \\
+\emph{AUC}: area under curve. \\
+
+\textbf{Figure 3.} Relationship between subject age and HERV expression in discovery cohort. \\
+a) Scatterplots demonstrating relationship between expression level and subject age for the 11 tumor specific HERVs.
+Points are overlaid with best fit lines (red) from linear models predicting expression level from subject age. \\
+b) Boxplots demonstrating value of test statistics associated with effect sizes of multiple variables from linear models predicting expression level from subject age and tissue phenotype in multiple regression for the 11 tumor specific HERVs.
+Boxes represent interquartile range (IQR), and whiskers extend to values 1.5 times the IQR.
+Boxplots are overlaid with points representing HERV loci. \\
+\emph{NAT}: normal adjacent to tumor, \emph{TUM}: tumor. \\
+
+\textbf{Figure 4.} Relationship between tumor MSI status or stage and HERV expression in discovery cohort. \\
+a) Boxplots demonstrating expression levels by tumor microsatellite instability (MSI) status of 11 proviral loci positively associated with the tumor phenotype.
+Boxes represent interquartile range (IQR), and whiskers extend to values 1.5 times the IQR.
+Boxplots are overlaid with points representing tumor samples. \\
+b) Boxplots demonstrating expression levels by tumor stage of 11 proviral loci positively associated with the tumor phenotype.
+Boxes represent interquartile range (IQR), and whiskers extend to values 1.5 times the IQR.
+Boxplots are overlaid with points representing tumor samples. \\
+\emph{MSI-H}: microsatellite instability high, \emph{MSI-L}: microsatellite instability low, \emph{MSS}: microsatellite stable. \\
+
+\textbf{Figure 5.} Relationship between cytotoxic activity and HERV expression in discovery cohort. \\
+a) Scatterplots demonstrating relationship between mean expression level of six genes associated with cytotoxic activity (i.e. cytotoxicity index) and expression levels of the 11 tumor specific HERVs.
+Points representing tumor samples are overlaid with best fit lines (red) from linear models predicting cytotoxicity index from HERV expression. \\
+b) Scatterplots demonstrating relationship between expression levels of six genes associated with cytotoxic activity (used to calculate the cytotoxicity index in panel \textbf{a}) and expression levels of the 11 tumor specific HERVs.
+Points representing tumor samples are overlaid with best fit lines (red) from linear models predicting cytotoxicity gene expression from HERV expression. \\
+\emph{GZMA}: granzyme A, \emph{GZMB}: granzyme B, \emph{GZMH}: granzyme H, \emph{GZMK}: granzyme K, \emph{GZMM}: granzyme M, \emph{PRF1}: perforin 1. \\
+
+\textbf{Figure 6.} Receiver operating characteristic curves in independent cohort. \\
+a) Receiver operating characteristic curves for the 11 tumor specific HERVs evaluated separately as binary classifiers of healthy and tumor samples. \\
+b) Receiver operating characteristic curves for the 11 tumor specific HERVs evaluated separately as binary classifiers of tumor adjacent and tumor samples. \\
+\emph{AUC}: area under curve. \\
+
+\textbf{Figure 7.} Boxplots re-demonstrating healthy specific over-expression using a novel HERV-K transcriptome. \\
+Boxplots demonstrating expression levels by phenotype of six proviral loci associated with the tumor phenotype (\emph{P} adjusted < 0.05) in samples from the discovery cohort of this analysis analyzed using an alternative proviral reference transcriptome as described in Grabski et al. (2020) \citep{Grabski2020}.
+Boxes represent interquartile range (IQR), and whiskers extend to values 1.5 times the IQR.
+Boxplots are overlaid with points representing samples from each tissue phenotype. \\
