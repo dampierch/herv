@@ -7,11 +7,7 @@ manuscript/main.bbl
 manuscript/main.blg
 manuscript/main.log
 manuscript/main.pdf
-manuscript/figs/fig1.pdf
-manuscript/figs/fig2.pdf
-manuscript/figs/fig3.pdf
-manuscript/figs/spf1.pdf
-manuscript/figs/spf2.pdf
+manuscript/figs/*.pdf
 manuscript/supp.aux
 manuscript/supp.bbl
 manuscript/supp.blg
