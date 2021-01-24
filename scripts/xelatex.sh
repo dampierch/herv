@@ -15,8 +15,8 @@ spf4=$9
 spf5=${10}
 spf6=${11}
 spf7=${12}
-spt1=${14}
-spt2=${15}
+spt1=${13}
+spt2=${14}
 
 cp $fig1 ../manuscript/figs/fig1.pdf
 cp $fig2 ../manuscript/figs/fig2.pdf
