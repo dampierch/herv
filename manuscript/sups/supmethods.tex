@@ -1,7 +1,13 @@
 \subsection*{Bioinformatic processing of RNA-seq reads}
 RNA-seq reads for all samples were stored and analyzed in FASTQ format.
-Reads from the Genomic Data Commons were downloaded in BAM files that included unaligned reads.
+Reads from the Genomic Data Commons (GDC) were downloaded in BAM files that included unaligned reads.
 All reads downloaded in BAM format were converted to FASTQ using Biobambam2 v2.0.87 \citep{Tischler2014}.
+
+During preliminary processing of reads from the GDC, two sets of paired-end reads from tumor samples previously included in Cohort A of Dampier et al. (2020) \citep{Dampier2020} that would otherwise have been included in the discovery cohort of this study were found to be from formalin fixed, paraffin embedded as opposed to flash frozen tissue.
+The two sets of reads, identified by file UUIDs b7e78979-c177-427d-a627-b5f241f36232 and ff6d6688-c19c-4a7f-8058-4d1bc0249d83 for subjects TCGA-A6-2677 and TCGA-A6-2672, respectively, were excluded from the discovery cohort.
+Single-end reads from flash frozen tissue of the same tumors (file UUIDs 90832632-cf57-463b-9d08-c76975066f56 and f08dc7f4-3cc3-4743-a84e-d586d74af8d1, respectively) were added to independent cohort \#1.
+With the addition of those two tumor samples to independent cohort \#1, and in order to increase the number of tumor adjacent normal samples in the discovery cohort, single-end reads from a tumor sample for subject TCGA-A6-2684 (file UUID ad1cc824-7bbc-4883-96da-55e51d1b6f0d) were removed from independent cohort \#1, and paired-end reads from tumor adjacent normal tissue from the same subject (file UUID 18625fe4-3c19-45d9-9d7c-a295fbf83f2e) were added to the discovery cohort.
+Besides those changes in sample allocation, the cohorts are the same as those analyzed in Dampier et al. (2020) \citep{Dampier2020}.
 
 \subsection*{Selection of unannotated HERV loci}
 Previously unannotated HERV transcripts were selected as follows.
